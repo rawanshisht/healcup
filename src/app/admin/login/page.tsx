@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
     if (res?.ok) {
       router.push('/admin')
     } else {
-      setError('Invalid username or password.')
+      setError(`Sign-in failed: ${res?.error ?? 'unknown error'} (status ${res?.status})`)
       setLoading(false)
     }
   }
