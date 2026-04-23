@@ -29,13 +29,14 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero ──────────────────────────────────────── */}
-      <section className="pattern-bg relative overflow-hidden min-h-[92vh] flex flex-col justify-center">
+      <section className="pattern-bg relative overflow-hidden min-h-[92vh] flex flex-col">
         {/* Layered depth overlays */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0a2c2c]/90 via-[#1a4a4a]/85 to-[#0d3535]/90" />
         {/* Decorative radial glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#c9a84c]/5 blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#c9a84c]/5 blur-3xl pointer-events-none" />
 
-        <div className="container-site relative z-10 py-24 md:py-0 text-center text-white">
+        {/* Main content — centred in the upper portion */}
+        <div className="container-site relative z-10 flex-1 flex flex-col items-center justify-center text-center text-white py-20 md:py-24">
 
           {/* Bismillah badge */}
           <div className="inline-flex items-center gap-3 mb-8">
@@ -70,7 +71,7 @@ export default async function HomePage() {
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/book"
               className="bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-10 py-4 rounded-md transition-colors text-base shadow-lg shadow-black/20"
@@ -84,24 +85,25 @@ export default async function HomePage() {
               How It Works <ChevronRight size={16} />
             </Link>
           </div>
-
-          {/* Trust stats strip */}
-          <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto border-t border-white/10 pt-10">
-            {[
-              { value: '500+', label: 'Patients treated' },
-              { value: '100%', label: 'Sterile equipment' },
-              { value: '5★',   label: 'Rated clinic' },
-            ].map(s => (
-              <div key={s.label} className="text-center">
-                <p className="text-2xl font-bold text-[#c9a84c]" style={{ fontFamily: 'Georgia, serif' }}>{s.value}</p>
-                <p className="text-white/50 text-xs mt-0.5 tracking-wide">{s.label}</p>
-              </div>
-            ))}
-          </div>
         </div>
 
-        {/* Bottom fade to page background */}
-        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#faf7f2] to-transparent pointer-events-none" />
+        {/* Trust stats — pinned to bottom with own dark background so it's always visible */}
+        <div className="relative z-10 border-t border-white/10 bg-[#0d3535]/60 backdrop-blur-sm">
+          <div className="container-site py-6">
+            <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto text-center">
+              {[
+                { value: '500+', label: 'Patients treated' },
+                { value: '100%', label: 'Sterile equipment' },
+                { value: '5★',   label: 'Rated clinic' },
+              ].map(s => (
+                <div key={s.label}>
+                  <p className="text-xl font-bold text-[#c9a84c]" style={{ fontFamily: 'Georgia, serif' }}>{s.value}</p>
+                  <p className="text-white/55 text-xs mt-0.5 tracking-wide">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ── Hadith banner ─────────────────────────────── */}
