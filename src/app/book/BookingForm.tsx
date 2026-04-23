@@ -9,12 +9,6 @@ import { useSearchParams } from 'next/navigation'
 import { Clock, CheckCircle2, AlertTriangle, MessageCircle, Star, Lock, Users } from 'lucide-react'
 import type { Service } from '@/lib/schema'
 
-// ── Time slots grouped by period ─────────────────────────────────────────────
-const TIME_GROUPS = [
-  { label: 'Morning',   icon: '🌅', slots: ['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM'] },
-  { label: 'Afternoon', icon: '☀️', slots: ['12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM'] },
-  { label: 'Evening',   icon: '🌙', slots: ['4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM'] },
-]
 
 const SCREENING_QUESTIONS = [
   { id: 'blood_thinners', label: 'Blood thinners or anticoagulant medication',  detail: 'e.g. warfarin, rivaroxaban, daily aspirin' },
@@ -61,7 +55,6 @@ export default function BookingForm({ services }: { services: Service[] }) {
   const clinicPhone    = process.env.NEXT_PUBLIC_CLINIC_PHONE    ?? ''
 
   const [step,      setStep]      = useState(1)
-  const [timePeriod,setTimePeriod]= useState<string | null>(null)
   const [flagged,   setFlagged]   = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [loading,   setLoading]   = useState(false)
@@ -83,7 +76,6 @@ export default function BookingForm({ services }: { services: Service[] }) {
 
   const selectedServiceId = watch('serviceId')
   const selectedService   = services.find(s => String(s.id) === selectedServiceId)
-  const selectedTime      = watch('preferredTime')
 
   // Step 1 → 2: validate service selection only
   const goToStep2 = async () => {
@@ -356,10 +348,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
 
             <button
               type="button"
-              onClick={async () => {
-                const ok = await trigger(['serviceId'])
-                if (ok) { setStep(2); window.scrollTo({ top: 0, behavior: 'smooth' }) }
-              }}
+              onClick={goToStep2}
               className="w-full bg-[#1a4a4a] hover:bg-[#1e5c5c] text-white font-bold py-3.5 rounded-xl transition-colors"
             >
               Continue with {selectedService ? selectedService.name : 'Selected Service'} →
@@ -442,7 +431,10 @@ export default function BookingForm({ services }: { services: Service[] }) {
                         ${checked ? 'border-[#1a4a4a] bg-[#f0f9f9] text-[#1a4a4a]' : 'border-[#e0d9cf] text-gray-600 hover:border-[#2a8a8a]'}`}
                     >
                       <input {...register('gender')} type="radio" value={g} className="sr-only" />
-                      {g === 'female' ? '👩' : '👨'} {g.charAt(0).toUpperCase() + g.slice(1)}
+                      <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${checked ? 'border-[#1a4a4a] bg-[#1a4a4a]' : 'border-[#c0b9b0]'}`}>
+                        {checked && <span className="w-1.5 h-1.5 rounded-full bg-white block" />}
+                      </span>
+                      {g.charAt(0).toUpperCase() + g.slice(1)}
                     </label>
                   )
                 })}
@@ -467,59 +459,20 @@ export default function BookingForm({ services }: { services: Service[] }) {
                 className="w-full border border-[#e0d9cf] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#237070]"
               />
               <p className="text-xs text-[#b8892a] mt-1.5 flex items-center gap-1">
-                ✦ The 17th, 19th &amp; 21st of the Islamic lunar month are Sunnah days — recommended by the Prophet ﷺ
+                ✦ You may book any date. The 17th, 19th &amp; 21st of the Arabic lunar month are recommended Sunnah days — we will confirm your appointment after booking.
               </p>
               {errors.preferredDate && <p className="text-red-500 text-xs mt-1">{errors.preferredDate.message}</p>}
             </div>
 
-            {/* Time — grouped slots */}
+            {/* Time */}
             <div>
               <label className="block text-sm font-semibold text-[#1a4a4a] mb-1.5">Preferred Time *</label>
-              {/* Period selector */}
-              <div className="flex gap-2 mb-3">
-                {TIME_GROUPS.map(g => (
-                  <button
-                    key={g.label}
-                    type="button"
-                    onClick={() => { setTimePeriod(g.label); setValue('preferredTime', '') }}
-                    className={`flex-1 flex flex-col items-center py-2.5 rounded-xl border-2 text-xs font-semibold transition-all
-                      ${timePeriod === g.label
-                        ? 'border-[#1a4a4a] bg-[#f0f9f9] text-[#1a4a4a]'
-                        : 'border-[#e0d9cf] text-gray-500 hover:border-[#2a8a8a]'
-                      }`}
-                  >
-                    <span className="text-base mb-0.5">{g.icon}</span>
-                    {g.label}
-                  </button>
-                ))}
-              </div>
-              {/* Slot grid */}
-              {timePeriod && (
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                  {TIME_GROUPS.find(g => g.label === timePeriod)?.slots.map(slot => {
-                    const active = selectedTime === slot
-                    return (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setValue('preferredTime', slot, { shouldValidate: true })}
-                        className={`py-2 rounded-lg border text-xs font-medium transition-all
-                          ${active
-                            ? 'border-[#1a4a4a] bg-[#1a4a4a] text-white'
-                            : 'border-[#e0d9cf] text-gray-600 hover:border-[#2a8a8a] hover:bg-[#f0f9f9]'
-                          }`}
-                      >
-                        {slot}
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
-              {!timePeriod && (
-                <p className="text-xs text-gray-400 text-center py-3 bg-[#fafafa] rounded-xl border border-dashed border-[#e0d9cf]">
-                  Select a period above to choose a time slot
-                </p>
-              )}
+              <input
+                {...register('preferredTime')}
+                type="time"
+                className="w-full border border-[#e0d9cf] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#237070]"
+              />
+              <p className="text-xs text-gray-400 mt-1.5">Clinic hours: Mon–Sat, 9:00 am – 6:00 pm</p>
               {errors.preferredTime && <p className="text-red-500 text-xs mt-1">{errors.preferredTime.message}</p>}
             </div>
 

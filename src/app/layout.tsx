@@ -1,9 +1,17 @@
 import type { Metadata } from 'next'
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import { Toaster } from '@/components/ui/sonner'
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+})
 
 const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama Clinic'
 
@@ -16,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={jakarta.variable}>
       <body>
         <Navbar />
         <main>{children}</main>

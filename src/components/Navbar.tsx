@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { Menu, X, Phone } from 'lucide-react'
 
 const links = [
@@ -15,13 +16,17 @@ const links = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
   const phone = process.env.NEXT_PUBLIC_CLINIC_PHONE ?? ''
+
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname.startsWith(href)
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-[--border] shadow-sm">
       <div className="container-site flex items-center justify-between h-16">
         {/* Logo */}
-        <Link href="/" className="flex flex-col leading-none">
+        <Link href="/" className="flex flex-col leading-none shrink-0">
           <span className="text-xl font-bold text-[--teal-800]" style={{ fontFamily: 'Georgia, serif' }}>
             {process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama'}
           </span>
@@ -29,12 +34,16 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-1">
           {links.map(l => (
             <Link
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-gray-700 hover:text-[--teal-700] transition-colors"
+              className={`text-sm font-medium px-3 py-1.5 rounded-md transition-colors ${
+                isActive(l.href)
+                  ? 'text-[--teal-700] bg-[--teal-50]'
+                  : 'text-gray-600 hover:text-[--teal-700] hover:bg-[--teal-50]'
+              }`}
             >
               {l.label}
             </Link>
@@ -42,46 +51,56 @@ export default function Navbar() {
         </nav>
 
         {/* CTA + phone */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3 shrink-0">
           {phone && (
-            <a href={`tel:${phone}`} className="flex items-center gap-1.5 text-sm text-[--teal-800] font-medium">
+            <a href={`tel:${phone}`} className="flex items-center gap-1.5 text-sm text-[--teal-800] font-medium hover:text-[--teal-600] transition-colors">
               <Phone size={14} /> {phone}
             </a>
           )}
           <Link
             href="/book"
-            className="bg-[--teal-800] text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-[--teal-700] transition-colors"
+            className="bg-[--teal-800] text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-[--teal-700] transition-colors shadow-sm"
           >
             Book Now
           </Link>
         </div>
 
         {/* Mobile toggle */}
-        <button className="md:hidden p-2 text-[--teal-800]" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+        <button
+          className="md:hidden p-2 text-[--teal-800] rounded-md hover:bg-[--teal-50] transition-colors"
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+        >
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
       {/* Mobile drawer */}
       {open && (
-        <div className="md:hidden border-t border-[--border] bg-white px-5 pb-5 pt-3 space-y-3">
+        <div className="md:hidden border-t border-[--border] bg-white px-5 pb-5 pt-3 space-y-1">
           {links.map(l => (
             <Link
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="block py-1.5 text-sm font-medium text-gray-700 hover:text-[--teal-700]"
+              className={`block py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                isActive(l.href)
+                  ? 'text-[--teal-700] bg-[--teal-50]'
+                  : 'text-gray-600 hover:text-[--teal-700] hover:bg-[--teal-50]'
+              }`}
             >
               {l.label}
             </Link>
           ))}
-          <Link
-            href="/book"
-            onClick={() => setOpen(false)}
-            className="block mt-2 bg-[--teal-800] text-white text-sm font-semibold px-4 py-2.5 rounded-md text-center"
-          >
-            Book an Appointment
-          </Link>
+          <div className="pt-2">
+            <Link
+              href="/book"
+              onClick={() => setOpen(false)}
+              className="block bg-[--teal-800] text-white text-sm font-semibold px-4 py-2.5 rounded-md text-center hover:bg-[--teal-700] transition-colors"
+            >
+              Book an Appointment
+            </Link>
+          </div>
         </div>
       )}
     </header>

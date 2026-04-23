@@ -159,22 +159,29 @@ export default async function HomePage() {
             <h2 className="text-3xl font-bold text-[#1a4a4a]" style={{ fontFamily: 'Georgia, serif' }}>How It Works</h2>
             <div className="gold-divider" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
-            {[
+          {(() => {
+            const steps = [
               { n: '01', title: 'Book Online',   body: 'Fill in our short appointment request form — takes under 3 minutes.' },
               { n: '02', title: 'We Confirm',    body: 'We review and confirm by WhatsApp or email, usually within a few hours.' },
               { n: '03', title: 'Attend & Heal', body: 'Arrive well rested. Your practitioner guides you through every step.' },
               { n: '04', title: 'Aftercare',     body: 'Follow simple aftercare advice. Most patients feel benefits within 24 hours.' },
-            ].map(step => (
-              <div key={step.n} className="text-center">
-                <div className="w-14 h-14 rounded-full bg-[#1a4a4a] text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold" style={{ fontFamily: 'Georgia, serif' }}>
-                  {step.n}
-                </div>
-                <h3 className="font-bold text-[#1a4a4a] mb-2" style={{ fontFamily: 'Georgia, serif' }}>{step.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{step.body}</p>
+            ]
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 relative">
+                {/* Desktop connector line */}
+                <div className="hidden sm:block absolute top-7 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-[#e0d9cf] via-[#c9a84c]/40 to-[#e0d9cf]" aria-hidden="true" />
+                {steps.map((step, i) => (
+                  <div key={step.n} className="text-center relative">
+                    <div className="w-14 h-14 rounded-full bg-[#1a4a4a] text-white flex items-center justify-center mx-auto mb-4 text-lg font-bold shadow-md relative z-10" style={{ fontFamily: 'Georgia, serif' }}>
+                      {step.n}
+                    </div>
+                    <h3 className="font-bold text-[#1a4a4a] mb-2" style={{ fontFamily: 'Georgia, serif' }}>{step.title}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{step.body}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            )
+          })()}
           <div className="text-center mt-10">
             <Link href="/how-it-works" className="inline-flex items-center gap-2 text-[#1e5c5c] font-semibold hover:text-[#237070]">
               Full guide with pre & post care <ChevronRight size={16} />
@@ -193,12 +200,22 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {TESTIMONIALS.map(t => (
-              <div key={t.name} className="bg-white rounded-xl p-6 border border-[#e0d9cf] shadow-sm">
-                <div className="flex gap-0.5 mb-4">
+              <div key={t.name} className="bg-white rounded-xl p-6 border border-[#e0d9cf] shadow-sm relative overflow-hidden flex flex-col">
+                <span
+                  className="absolute top-2 right-4 text-8xl leading-none select-none pointer-events-none text-[#e8e3db]"
+                  style={{ fontFamily: 'Georgia, serif' }}
+                  aria-hidden="true"
+                >&ldquo;</span>
+                <div className="flex gap-0.5 mb-4 relative z-10">
                   {[...Array(5)].map((_, i) => <Star key={i} size={14} className="text-[#c9a84c] fill-[#c9a84c]" />)}
                 </div>
-                <p className="text-sm text-gray-700 italic leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
-                <p className="text-xs font-semibold text-[#1e5c5c]">— {t.name}</p>
+                <p className="text-sm text-gray-700 leading-relaxed mb-5 flex-1 relative z-10">{t.text}</p>
+                <div className="flex items-center gap-3 relative z-10 pt-4 border-t border-[#f0ebe3]">
+                  <div className="w-8 h-8 rounded-full bg-[#e6f4f4] flex items-center justify-center text-xs font-bold text-[#1e5c5c] shrink-0">
+                    {t.name.charAt(0)}
+                  </div>
+                  <p className="text-xs font-semibold text-[#1e5c5c]">{t.name}</p>
+                </div>
               </div>
             ))}
           </div>
