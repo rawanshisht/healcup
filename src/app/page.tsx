@@ -29,36 +29,79 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero ──────────────────────────────────────── */}
-      <section className="pattern-bg relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0d3535]/60 to-[#1a4a4a]/80" />
-        <div className="container-site relative z-10 py-32 md:py-48 text-center text-white">
-          <p className="text-[#c9a84c] text-xs tracking-[0.3em] uppercase mb-4 font-medium">
-            ﷽ &nbsp;In the Name of Allah
-          </p>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
-            Healing Through<br />
+      <section className="pattern-bg relative overflow-hidden min-h-[92vh] flex flex-col justify-center">
+        {/* Layered depth overlays */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a2c2c]/90 via-[#1a4a4a]/85 to-[#0d3535]/90" />
+        {/* Decorative radial glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#c9a84c]/5 blur-3xl pointer-events-none" />
+
+        <div className="container-site relative z-10 py-24 md:py-0 text-center text-white">
+
+          {/* Bismillah badge */}
+          <div className="inline-flex items-center gap-3 mb-8">
+            <span className="h-px w-10 bg-[#c9a84c]/50" />
+            <p className="text-[#c9a84c] text-[11px] tracking-[0.35em] uppercase font-semibold">
+              ﷽ &nbsp;In the Name of Allah
+            </p>
+            <span className="h-px w-10 bg-[#c9a84c]/50" />
+          </div>
+
+          {/* Heading */}
+          <h1
+            className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.1] mb-6"
+            style={{ fontFamily: 'Georgia, serif' }}
+          >
+            Healing Through
+            <br />
             <span className="text-[#c9a84c]">the Sunnah</span>
           </h1>
-          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed">
+
+          {/* Gold divider */}
+          <div className="flex items-center justify-center gap-3 my-7">
+            <span className="h-px w-16 bg-gradient-to-r from-transparent to-[#c9a84c]/60" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#c9a84c]" />
+            <span className="h-px w-16 bg-gradient-to-l from-transparent to-[#c9a84c]/60" />
+          </div>
+
+          {/* Sub-heading */}
+          <p className="text-lg md:text-xl text-white/75 max-w-2xl mx-auto mb-10 leading-relaxed">
             Professional hijama (cupping therapy) in a safe, caring, and spiritually mindful environment.
             Rooted in Prophetic medicine. Grounded in modern hygiene standards.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Link
               href="/book"
-              className="bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-8 py-3.5 rounded-md transition-colors text-base"
+              className="bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-10 py-4 rounded-md transition-colors text-base shadow-lg shadow-black/20"
             >
               Book an Appointment
             </Link>
             <Link
               href="/how-it-works"
-              className="border border-white/40 hover:border-white text-white font-medium px-8 py-3.5 rounded-md transition-colors text-base flex items-center justify-center gap-2"
+              className="border border-white/30 hover:border-white/70 hover:bg-white/5 text-white font-medium px-10 py-4 rounded-md transition-colors text-base flex items-center justify-center gap-2"
             >
               How It Works <ChevronRight size={16} />
             </Link>
           </div>
+
+          {/* Trust stats strip */}
+          <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto border-t border-white/10 pt-10">
+            {[
+              { value: '500+', label: 'Patients treated' },
+              { value: '100%', label: 'Sterile equipment' },
+              { value: '5★',   label: 'Rated clinic' },
+            ].map(s => (
+              <div key={s.label} className="text-center">
+                <p className="text-2xl font-bold text-[#c9a84c]" style={{ fontFamily: 'Georgia, serif' }}>{s.value}</p>
+                <p className="text-white/50 text-xs mt-0.5 tracking-wide">{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#faf7f2] to-transparent" />
+
+        {/* Bottom fade to page background */}
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#faf7f2] to-transparent pointer-events-none" />
       </section>
 
       {/* ── Hadith banner ─────────────────────────────── */}
