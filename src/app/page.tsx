@@ -87,7 +87,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Trust stats — pinned to bottom, same hero background shows through */}
+        {/* Trust stats */}
         <div className="relative z-10 border-t border-white/10">
           <div className="container-site py-6">
             <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto text-center">
@@ -104,15 +104,15 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ── Hadith banner ─────────────────────────────── */}
-      <section className="bg-[#fdf6e3] border-y border-[#c9a84c]/30 py-8">
-        <div className="container-site text-center">
-          <p className="text-xl md:text-2xl font-semibold text-[#1a4a4a] italic" style={{ fontFamily: 'Georgia, serif' }}>
-            &ldquo;The best of your treatments is hijama (cupping).&rdquo;
-          </p>
-          <p className="mt-2 text-sm text-[#b8892a]">— Sahih al-Bukhari 5371, narrated by Ibn Abbas (رضي الله عنه)</p>
+        {/* Hadith banner — inside hero, shares same dark background */}
+        <div className="relative z-10 border-t border-[#c9a84c]/20">
+          <div className="container-site py-8 text-center">
+            <p className="text-xl md:text-2xl font-semibold text-white/90 italic" style={{ fontFamily: 'Georgia, serif' }}>
+              &ldquo;The best of your treatments is hijama (cupping).&rdquo;
+            </p>
+            <p className="mt-2 text-sm text-[#c9a84c]">— Sahih al-Bukhari 5371, narrated by Ibn Abbas (رضي الله عنه)</p>
+          </div>
         </div>
       </section>
 
