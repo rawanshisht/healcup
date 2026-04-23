@@ -31,7 +31,7 @@ export default async function HomePage() {
       {/* ── Hero ──────────────────────────────────────── */}
       <section className="pattern-bg relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0d3535]/60 to-[#1a4a4a]/80" />
-        <div className="container-site relative z-10 py-24 md:py-36 text-center text-white">
+        <div className="container-site relative z-10 py-32 md:py-48 text-center text-white">
           <p className="text-[#c9a84c] text-xs tracking-[0.3em] uppercase mb-4 font-medium">
             ﷽ &nbsp;In the Name of Allah
           </p>

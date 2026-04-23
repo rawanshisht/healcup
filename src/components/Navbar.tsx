@@ -39,10 +39,10 @@ export default function Navbar() {
             <Link
               key={l.href}
               href={l.href}
-              className={`text-sm font-medium px-3 py-1.5 rounded-md transition-colors ${
+              className={`text-sm font-medium px-3 py-1.5 rounded-md transition-all duration-150 ${
                 isActive(l.href)
-                  ? 'text-[--teal-700] bg-[--teal-50]'
-                  : 'text-gray-600 hover:text-[--teal-700] hover:bg-[--teal-50]'
+                  ? 'text-[#1e5c5c] bg-[#e6f4f4]'
+                  : 'text-gray-600 hover:text-[#1e5c5c] hover:bg-[#e6f4f4] active:bg-[#cce9e9]'
               }`}
             >
               {l.label}
@@ -67,7 +67,7 @@ export default function Navbar() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden p-2 text-[--teal-800] rounded-md hover:bg-[--teal-50] transition-colors"
+          className="md:hidden p-2 text-[#1a4a4a] rounded-md hover:bg-[#e6f4f4] active:bg-[#cce9e9] transition-all duration-150"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
@@ -83,10 +83,10 @@ export default function Navbar() {
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className={`block py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+              className={`block py-2.5 px-3 rounded-md text-sm font-medium transition-all duration-150 ${
                 isActive(l.href)
-                  ? 'text-[--teal-700] bg-[--teal-50]'
-                  : 'text-gray-600 hover:text-[--teal-700] hover:bg-[--teal-50]'
+                  ? 'text-[#1e5c5c] bg-[#e6f4f4]'
+                  : 'text-gray-600 hover:text-[#1e5c5c] hover:bg-[#e6f4f4] active:bg-[#cce9e9]'
               }`}
             >
               {l.label}
