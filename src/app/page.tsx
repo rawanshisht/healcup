@@ -87,8 +87,8 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Trust stats — pinned to bottom with own dark background so it's always visible */}
-        <div className="relative z-10 border-t border-white/10 bg-[#0d3535]/60 backdrop-blur-sm">
+        {/* Trust stats — pinned to bottom, same hero background shows through */}
+        <div className="relative z-10 border-t border-white/10">
           <div className="container-site py-6">
             <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto text-center">
               {[
