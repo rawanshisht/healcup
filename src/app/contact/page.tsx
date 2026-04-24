@@ -4,10 +4,10 @@ import { Phone, Mail, MapPin, Clock, MessageCircle } from 'lucide-react'
 export const metadata: Metadata = { title: 'Contact Us' }
 
 export default function ContactPage() {
-  const phone    = process.env.NEXT_PUBLIC_CLINIC_PHONE    ?? '+44 700 000 0000'
-  const email    = process.env.NEXT_PUBLIC_CLINIC_EMAIL    ?? 'info@yourdomain.com'
-  const wa       = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ''
-  const mapsUrl  = process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL ?? '#'
+  const phone = process.env.NEXT_PUBLIC_CLINIC_PHONE ?? '+44 700 000 0000'
+  const email = process.env.NEXT_PUBLIC_CLINIC_EMAIL ?? 'info@yourdomain.com'
+  const wa = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ''
+  const mapsUrl = process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL ?? '#'
 
   return (
     <>
@@ -32,9 +32,9 @@ export default function ContactPage() {
               </p>
 
               {[
-                { icon: Phone,         label: 'Phone', value: phone,        href: `tel:${phone}` },
-                { icon: Mail,          label: 'Email', value: email,        href: `mailto:${email}` },
-                { icon: MapPin,        label: 'Address', value: '123 Clinic Street, City, Postcode', href: mapsUrl },
+                { icon: Phone, label: 'Phone', value: phone, href: `tel:${phone}` },
+                { icon: Mail, label: 'Email', value: email, href: `mailto:${email}` },
+                { icon: MapPin, label: 'Address', value: '123 Clinic Street, City, Postcode', href: mapsUrl },
               ].map(({ icon: Icon, label, value, href }) => (
                 <a key={label} href={href} target={label === 'Address' ? '_blank' : undefined} rel="noopener noreferrer"
                   className="flex items-start gap-3 p-4 bg-white rounded-xl border border-[#e0d9cf] hover:border-[#2a8a8a] transition-colors group">
@@ -47,20 +47,6 @@ export default function ContactPage() {
                   </div>
                 </a>
               ))}
-
-              <div className="flex items-start gap-3 p-4 bg-white rounded-xl border border-[#e0d9cf]">
-                <div className="w-9 h-9 bg-[#e6f4f4] rounded-full flex items-center justify-center shrink-0">
-                  <Clock size={16} className="text-[#1e5c5c]" />
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Opening Hours</p>
-                  <div className="text-sm text-[#1a4a4a] space-y-0.5">
-                    <p>Monday – Friday: 9:00 am – 7:00 pm</p>
-                    <p>Saturday: 9:00 am – 5:00 pm</p>
-                    <p>Sunday: Closed</p>
-                  </div>
-                </div>
-              </div>
 
               {wa && (
                 <a

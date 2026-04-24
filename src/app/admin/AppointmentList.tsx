@@ -7,32 +7,32 @@ import type { Appointment } from '@/lib/schema'
 import { Phone, Mail, ChevronDown, ChevronUp } from 'lucide-react'
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:     'bg-[#fdf6e3] text-[#b8892a] border-[#c9a84c]/40',
-  confirmed:   'bg-[#e6f4f4] text-[#1e5c5c] border-[#2a8a8a]/40',
-  cancelled:   'bg-red-50 text-red-700 border-red-200',
+  pending: 'bg-[#fdf6e3] text-[#b8892a] border-[#c9a84c]/40',
+  confirmed: 'bg-[#e6f4f4] text-[#1e5c5c] border-[#2a8a8a]/40',
+  cancelled: 'bg-red-50 text-red-700 border-red-200',
   rescheduled: 'bg-purple-50 text-purple-700 border-purple-200',
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  pending:     'Pending',
-  confirmed:   'Confirmed',
-  cancelled:   'Cancelled',
+  pending: 'Pending',
+  confirmed: 'Confirmed',
+  cancelled: 'Cancelled',
   rescheduled: 'Rescheduled',
 }
 
 const SCREENING_LABELS: Record<string, string> = {
   blood_thinners: 'Blood thinners / anticoagulants',
   skin_infection: 'Active skin infection or open wound',
-  fever:          'Fever or acute illness',
-  pregnant:       'Pregnancy',
-  anaemia:        'Severe anaemia / blood disorder',
+  fever: 'Fever or acute illness',
+  pregnant: 'Pregnancy',
+  anaemia: 'Severe anaemia / blood disorder',
   recent_surgery: 'Surgery within the last 4 weeks',
 }
 
 export default function AppointmentList({ initialAppointments }: { initialAppointments: Appointment[] }) {
-  const [appts, setAppts]     = useState(initialAppointments)
+  const [appts, setAppts] = useState(initialAppointments)
   const [expanded, setExpanded] = useState<number | null>(null)
-  const [notes, setNotes]     = useState<Record<number, string>>({})
+  const [notes, setNotes] = useState<Record<number, string>>({})
 
   const updateStatus = async (id: number, status: string) => {
     const res = await fetch(`/api/appointments/${id}`, {

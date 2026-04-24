@@ -1,40 +1,50 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { AlertTriangle, CheckCircle2, Droplets, Wind } from 'lucide-react'
+import StepsSlider from './StepsSlider'
 
 export const metadata: Metadata = { title: 'How It Works' }
 
-const PRE_CARE = [
-  'Eat a light meal at least 2 hours before your appointment — do not arrive on a completely empty stomach.',
-  'Shower and wear clean, loose, dark-coloured clothing (cups may leave temporary marks).',
-  'Stay well hydrated — drink plenty of water the day before and the morning of your appointment.',
+const BEFORE = [
+  'Eat a light meal at least 2 hours before — do not arrive on an empty stomach.',
+  'Wear clean, loose, dark-coloured clothing (cups may leave temporary marks).',
+  'Stay well hydrated the day before and morning of your appointment.',
   'Avoid strenuous exercise for 24 hours before treatment.',
   'Do not shave the treatment area on the day of your appointment.',
-  'Inform us of any medications, health conditions, or concerns before your session begins.',
+  'Inform us of any medications, health conditions, or concerns.',
 ]
 
-const AFTERCARE = [
-  'Rest for the remainder of the day — avoid strenuous activity for at least 24 hours.',
-  'Avoid cold water, cold showers, or swimming for at least 24 hours after treatment.',
-  'Eat light, nutritious food after your session. Honey and dates are Sunnah recommendations.',
+const AFTER = [
+  'Rest for the day — avoid strenuous activity for at least 24 hours.',
+  'Avoid cold water, cold showers, or swimming for 24 hours after treatment.',
+  'Eat light, nutritious food. Honey and dates are Sunnah recommendations.',
   'Keep the treatment area clean and covered if needed.',
   'Drink plenty of water to aid detoxification.',
-  'The circular marks from cupping are normal and will fade within 3–10 days.',
-  'Contact us if you experience any unusual pain, excessive bruising, or signs of infection.',
+  'Circular marks from cupping are normal and will fade within 3–10 days.',
+  'Contact us if you experience unusual pain or signs of infection.',
 ]
 
-const CONTRAINDICATIONS = [
+const UNSUITABLE = [
   'Currently taking blood thinners or anticoagulant medication',
-  'Active open wounds, skin infections, or eczema at the treatment site',
   'Fever or acute illness on the day of treatment',
-  'Pregnancy (please consult us — some forms may be appropriate)',
   'Severe anaemia or blood disorders',
+  'Active open wounds, skin infections, or eczema at the treatment site',
+  'Pregnancy (please consult us — some forms may be appropriate)',
   'Very recent surgery (within the past 4 weeks)',
 ]
+
+function CheckIcon({ color = '#c9a84c' }: { color?: string }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: 2 }}>
+      <circle cx="8" cy="8" r="7.5" stroke={color} strokeWidth="1" />
+      <path d="M5 8l2 2 4-4" stroke={color} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
 
 export default function HowItWorksPage() {
   return (
     <>
+      {/* ── Header ─────────────────────────────────────── */}
       <section className="pattern-bg relative py-20 text-center text-white">
         <div className="absolute inset-0 bg-[#1a4a4a]/80" />
         <div className="container-site relative z-10">
@@ -44,110 +54,194 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* Steps */}
-      <section className="py-16 pattern-light">
-        <div className="container-site max-w-3xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-[#1a4a4a]" style={{ fontFamily: 'Georgia, serif' }}>What to Expect</h2>
-            <div className="gold-divider" />
+      {/* ══════════════════════════════════════════════════
+          What to Expect — slider (3 steps at a time)
+      ══════════════════════════════════════════════════ */}
+      <section className="pattern-light pt-12 pb-10 md:pt-14 md:pb-12">
+        <div className="container-site">
+          {/* Section heading */}
+          <div className="text-center mb-10 md:mb-12">
+            <p
+              className="font-semibold uppercase mb-2.5"
+              style={{ fontSize: 11, letterSpacing: 3, color: '#c9a84c' }}
+            >
+              Your Journey
+            </p>
+            <h2
+              className="leading-tight"
+              style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 'clamp(2rem, 4vw, 2.6rem)', fontWeight: 600, color: '#1a2420' }}
+            >
+              What to Expect
+            </h2>
+            <div className="w-10 h-0.5 mx-auto mt-3.5" style={{ background: '#c9a84c' }} />
           </div>
-          <div className="space-y-6">
-            {[
-              { n: '1', title: 'Consultation',        body: 'Before every session, your practitioner discusses your health history, goals, and any concerns. Your pre-screening questionnaire is reviewed to ensure hijama is appropriate for you.' },
-              { n: '2', title: 'Preparation',         body: 'You will be guided to a private, comfortable treatment room. The treatment area is cleaned with antiseptic. All equipment is sterile and single-use — opened in front of you.' },
-              { n: '3', title: 'Dry Cupping Phase',   body: 'Cups are placed on the skin and light suction is applied. This creates a gentle pulling sensation that draws blood to the surface. Most patients find this deeply relaxing.' },
-              { n: '4', title: 'Wet Hijama (if applicable)', body: 'For wet hijama, small, superficial scratches are made with a sterile lancet before the cup is replaced. This draws out a small amount of stagnant blood — the core practice of traditional hijama.' },
-              { n: '5', title: 'Cleansing & Dressing', body: 'The treatment area is thoroughly cleaned and dressed. Your practitioner checks on your comfort and ensures you feel well before leaving.' },
-              { n: '6', title: 'Aftercare Guidance',  body: 'You receive clear written and verbal aftercare instructions before you leave. You are encouraged to rest and are given contact details for any follow-up questions.' },
-            ].map(step => (
-              <div key={step.n} className="flex gap-5">
-                <div className="w-10 h-10 rounded-full bg-[#1a4a4a] text-white flex items-center justify-center text-sm font-bold shrink-0 mt-0.5" style={{ fontFamily: 'Georgia, serif' }}>
-                  {step.n}
+
+          <StepsSlider />
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════
+          DESKTOP: Before / After — full-width 2-col split
+      ══════════════════════════════════════════════════ */}
+      <div className="hidden md:grid grid-cols-2" style={{ marginTop: 52 }}>
+        {/* Before — dark green */}
+        <div className="relative overflow-hidden px-12 py-11" style={{ background: '#1a4a4a' }}>
+          {/* Dot pattern */}
+          <svg className="absolute inset-0 w-full h-full opacity-[0.05] pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+              <pattern id="ba-dot" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                <circle cx="4" cy="4" r="0.7" fill="#c9a84c" />
+              </pattern>
+            </defs>
+            <rect width="100" height="100" fill="url(#ba-dot)" />
+          </svg>
+          <div className="relative z-10">
+            <p className="text-[10.5px] font-semibold tracking-[2.5px] uppercase mb-1.5" style={{ color: '#c9a84c' }}>
+              Before Your Appointment
+            </p>
+            <h3
+              className="mb-6 leading-tight"
+              style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 32, fontWeight: 600, color: '#fff' }}
+            >
+              How to Prepare
+            </h3>
+            <div className="flex flex-col gap-3">
+              {BEFORE.map((item, i) => (
+                <div key={i} className="flex gap-2.5 items-start">
+                  <CheckIcon color="#c9a84c" />
+                  <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.78)' }}>{item}</p>
                 </div>
-                <div>
-                  <h3 className="font-bold text-[#1a4a4a] mb-1" style={{ fontFamily: 'Georgia, serif' }}>{step.title}</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">{step.body}</p>
-                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* After — warm amber */}
+        <div className="px-12 py-11" style={{ background: '#fdf3e3', borderLeft: '3px solid #e8b860' }}>
+          <p className="text-[10.5px] font-semibold tracking-[2.5px] uppercase mb-1.5" style={{ color: '#c9a84c' }}>
+            After Your Appointment
+          </p>
+          <h3
+            className="mb-6 leading-tight"
+            style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 32, fontWeight: 600, color: '#1a2420' }}
+          >
+            Recovery &amp; Care
+          </h3>
+          <div className="flex flex-col gap-3">
+            {AFTER.map((item, i) => (
+              <div key={i} className="flex gap-2.5 items-start">
+                <CheckIcon color="#c9a84c" />
+                <p className="text-sm leading-relaxed" style={{ color: '#4a5e58' }}>{item}</p>
               </div>
             ))}
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Pre and Aftercare */}
-      <section className="py-16 bg-[#f2ede4]">
-        <div className="container-site">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="bg-white rounded-xl p-6 border border-[#e0d9cf] shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-[#e6f4f4] rounded-full flex items-center justify-center">
-                  <Droplets size={16} className="text-[#1e5c5c]" />
-                </div>
-                <h2 className="text-lg font-bold text-[#1a4a4a]" style={{ fontFamily: 'Georgia, serif' }}>Before Your Appointment</h2>
+      {/* ══════════════════════════════════════════════════
+          MOBILE: Before / After — stacked cards
+      ══════════════════════════════════════════════════ */}
+      <div className="md:hidden pattern-light px-5 pt-6 pb-0 flex flex-col gap-3.5">
+        {/* Before */}
+        <div className="rounded-xl px-[22px] py-7" style={{ background: '#1a4a4a' }}>
+          <p className="text-[10px] font-semibold tracking-[2.5px] uppercase mb-2" style={{ color: '#c9a84c' }}>
+            Before Your Appointment
+          </p>
+          <h3
+            className="mb-5 leading-tight"
+            style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 26, fontWeight: 600, color: '#fff' }}
+          >
+            How to Prepare
+          </h3>
+          <div className="flex flex-col gap-2.5">
+            {BEFORE.map((item, i) => (
+              <div key={i} className="flex gap-2.5 items-start">
+                <CheckIcon color="#c9a84c" />
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.78)' }}>{item}</p>
               </div>
-              <ul className="space-y-2.5">
-                {PRE_CARE.map(item => (
-                  <li key={item} className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle2 size={14} className="text-[#237070] shrink-0 mt-0.5" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-white rounded-xl p-6 border border-[#e0d9cf] shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-[#fdf6e3] rounded-full flex items-center justify-center">
-                  <Wind size={16} className="text-[#b8892a]" />
-                </div>
-                <h2 className="text-lg font-bold text-[#1a4a4a]" style={{ fontFamily: 'Georgia, serif' }}>After Your Appointment</h2>
-              </div>
-              <ul className="space-y-2.5">
-                {AFTERCARE.map(item => (
-                  <li key={item} className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle2 size={14} className="text-[#c9a84c] shrink-0 mt-0.5" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            ))}
           </div>
         </div>
-      </section>
 
-      {/* Contraindications */}
-      <section className="py-12 pattern-light">
-        <div className="container-site max-w-3xl mx-auto">
-          <div className="bg-[#fff9ed] border border-[#c9a84c]/40 rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <AlertTriangle size={18} className="text-[#b8892a]" />
-              <h2 className="text-lg font-bold text-[#1a4a4a]" style={{ fontFamily: 'Georgia, serif' }}>
+        {/* After */}
+        <div className="rounded-xl px-[22px] py-7" style={{ background: '#fdf3e3', borderLeft: '3px solid #e8b860' }}>
+          <p className="text-[10px] font-semibold tracking-[2.5px] uppercase mb-2" style={{ color: '#c9a84c' }}>
+            After Your Appointment
+          </p>
+          <h3
+            className="mb-5 leading-tight"
+            style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 26, fontWeight: 600, color: '#1a2420' }}
+          >
+            Recovery &amp; Care
+          </h3>
+          <div className="flex flex-col gap-2.5">
+            {AFTER.map((item, i) => (
+              <div key={i} className="flex gap-2.5 items-start">
+                <CheckIcon color="#c9a84c" />
+                <p className="text-sm leading-relaxed" style={{ color: '#4a5e58' }}>{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════
+          Warning box — shared, responsive layout inside
+      ══════════════════════════════════════════════════ */}
+      <section className="pattern-light px-5 pt-9 pb-14 md:py-10">
+        <div className="container-site max-w-4xl mx-auto">
+          <div
+            className="rounded-xl p-6 md:p-8 flex flex-col md:flex-row gap-5 md:gap-7 items-start"
+            style={{ background: '#2a1a08' }}
+          >
+            {/* Icon */}
+            <div
+              className="flex items-center justify-center w-10 h-10 md:w-[42px] md:h-[42px] rounded-full shrink-0 text-xl"
+              style={{ background: '#e8b860' }}
+            >
+              ⚠
+            </div>
+            <div className="flex-1">
+              <h4
+                className="mb-1.5 leading-snug"
+                style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 22, fontWeight: 600, color: '#fff' }}
+              >
                 When Hijama May Not Be Suitable
-              </h2>
+              </h4>
+              <p className="text-sm mb-5 leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                Hijama is not suitable for everyone. Our pre-booking health questionnaire screens for the following conditions.
+                If any apply, please contact us before booking.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                {UNSUITABLE.map((item, i) => (
+                  <div key={i} className="flex gap-2 items-start">
+                    <span className="text-sm shrink-0 mt-0.5" style={{ color: '#e8b860' }}>—</span>
+                    <p className="text-sm leading-snug" style={{ color: 'rgba(255,255,255,0.72)' }}>{item}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
-              Hijama is not suitable for everyone. Our pre-booking health questionnaire screens for the following conditions. If any apply to you, please contact us before booking.
-            </p>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {CONTRAINDICATIONS.map(item => (
-                <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
-                  <span className="text-[#b8892a] mt-0.5">•</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </section>
 
+      {/* ── CTA ─────────────────────────────────────────── */}
       <section className="py-14 bg-[#1a4a4a] text-white text-center">
         <div className="container-site">
-          <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif' }}>Ready to Book?</h2>
+          <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: 'Georgia, serif' }}>Ready to Book?</h2>
           <p className="text-white/70 mb-6 text-sm">Our team is here to answer any questions before you book.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/book" className="inline-block bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-7 py-3 rounded-md transition-colors">
+            <Link
+              href="/book"
+              className="inline-block font-bold px-7 py-3 rounded-md transition-colors text-sm"
+              style={{ background: '#c9a84c', color: '#fff' }}
+            >
               Book an Appointment
             </Link>
-            <Link href="/faq" className="inline-block border border-white/40 hover:border-white text-white font-medium px-7 py-3 rounded-md transition-colors">
+            <Link
+              href="/faq"
+              className="inline-block border border-white/40 hover:border-white text-white font-medium px-7 py-3 rounded-md transition-colors text-sm"
+            >
               Read the FAQ
             </Link>
           </div>

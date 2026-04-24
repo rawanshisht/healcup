@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: 'Admin — Services' }
 export default async function AdminServicesPage() {
   const allServices = await db.select().from(services).orderBy(asc(services.sortOrder))
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 my-4">
       <div>
         <h1 className="text-2xl font-bold text-[#1a4a4a]" style={{ fontFamily: 'Georgia, serif' }}>Manage Services</h1>
         <p className="text-sm text-gray-500 mt-1">Add, edit, or disable services shown on the website.</p>

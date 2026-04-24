@@ -5,10 +5,10 @@ import { eq, asc } from 'drizzle-orm'
 import { Star, Shield, Heart, Clock, ChevronRight, Sparkles } from 'lucide-react'
 
 const BENEFITS = [
-  { icon: Heart,    title: 'Promotes Healing',      body: 'Stimulates blood flow, removes stagnant blood, and activates the body\'s natural healing response.' },
-  { icon: Shield,   title: 'Rooted in the Sunnah',  body: 'Hijama is a Prophetic medicine recommended by the Prophet ﷺ and practised for over 1,400 years.' },
-  { icon: Sparkles, title: 'Holistic Wellbeing',    body: 'Addresses physical ailments, stress, fatigue, and supports overall mental and spiritual wellbeing.' },
-  { icon: Star,     title: 'Skilled Practitioners', body: 'Our certified practitioners follow strict hygiene protocols and provide personalised, compassionate care.' },
+  { icon: Heart, title: 'Promotes Healing', body: 'Stimulates blood flow, removes stagnant blood, and activates the body\'s natural healing response.' },
+  { icon: Shield, title: 'Rooted in the Sunnah', body: 'Hijama is a Prophetic medicine recommended by the Prophet ﷺ and practised for over 1,400 years.' },
+  { icon: Sparkles, title: 'Holistic Wellbeing', body: 'Addresses physical ailments, stress, fatigue, and supports overall mental and spiritual wellbeing.' },
+  { icon: Star, title: 'Skilled Practitioners', body: 'Our certified practitioners follow strict hygiene protocols and provide personalised, compassionate care.' },
 ]
 
 const TESTIMONIALS = [
@@ -29,7 +29,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero ──────────────────────────────────────── */}
-      <section className="pattern-bg relative overflow-hidden min-h-screen flex flex-col">
+      <section className="pattern-bg relative overflow-hidden min-h-screen flex flex-col py-4">
         {/* Layered depth overlays */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0a2c2c]/90 via-[#1a4a4a]/85 to-[#0d3535]/90" />
         {/* Decorative radial glow */}
@@ -39,7 +39,7 @@ export default async function HomePage() {
         <div className="container-site relative z-10 flex-1 flex flex-col items-center justify-center text-center text-white px-6 py-28 md:py-36">
 
           {/* Bismillah badge */}
-          <div className="inline-flex items-center gap-3 mb-10">
+          <div className="inline-flex items-center gap-3 mb-6">
             <span className="h-px w-10 bg-[#c9a84c]/50" />
             <p className="text-[#c9a84c] text-[11px] tracking-[0.35em] uppercase font-semibold">
               ﷽ &nbsp;In the Name of Allah
@@ -49,7 +49,7 @@ export default async function HomePage() {
 
           {/* Heading */}
           <h1
-            className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.1] mb-6"
+            className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.1] mb-3"
             style={{ fontFamily: 'Georgia, serif' }}
           >
             Healing Through
@@ -58,7 +58,7 @@ export default async function HomePage() {
           </h1>
 
           {/* Gold divider */}
-          <div className="flex items-center justify-center gap-3 my-8">
+          <div className="flex items-center justify-center gap-3 my-6">
             <span className="h-px w-16 bg-gradient-to-r from-transparent to-[#c9a84c]/60" />
             <span className="w-1.5 h-1.5 rounded-full bg-[#c9a84c]" />
             <span className="h-px w-16 bg-gradient-to-l from-transparent to-[#c9a84c]/60" />
@@ -71,7 +71,7 @@ export default async function HomePage() {
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Link
               href="/book"
               className="bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-10 py-4 rounded-md transition-colors text-base shadow-lg shadow-black/20"
@@ -87,25 +87,17 @@ export default async function HomePage() {
           </div>
 
           {/* Trust stats */}
-          <div className="grid grid-cols-3 gap-6 max-w-lg mx-auto mb-16">
+          <div className="grid grid-cols-3 gap-6 max-w-lg mx-auto mb-6">
             {[
               { value: '500+', label: 'Patients treated' },
               { value: '100%', label: 'Sterile equipment' },
-              { value: '5★',   label: 'Rated clinic' },
+              { value: '5★', label: 'Rated clinic' },
             ].map(s => (
               <div key={s.label}>
                 <p className="text-2xl font-bold text-[#c9a84c]" style={{ fontFamily: 'Georgia, serif' }}>{s.value}</p>
                 <p className="text-white/55 text-xs mt-1 tracking-wide">{s.label}</p>
               </div>
             ))}
-          </div>
-
-          {/* Hadith quote */}
-          <div className="max-w-2xl mx-auto">
-            <p className="text-lg md:text-xl font-semibold text-white/85 italic leading-relaxed" style={{ fontFamily: 'Georgia, serif' }}>
-              &ldquo;The best of your treatments is hijama (cupping).&rdquo;
-            </p>
-            <p className="mt-3 text-sm text-[#c9a84c]">— Sahih al-Bukhari 5371, narrated by Ibn Abbas (رضي الله عنه)</p>
           </div>
 
         </div>
@@ -201,10 +193,10 @@ export default async function HomePage() {
           </div>
           {(() => {
             const steps = [
-              { n: '01', title: 'Book Online',   body: 'Fill in our short appointment request form — takes under 3 minutes.' },
-              { n: '02', title: 'We Confirm',    body: 'We review and confirm by WhatsApp or email, usually within a few hours.' },
+              { n: '01', title: 'Book Online', body: 'Fill in our short appointment request form — takes under 3 minutes.' },
+              { n: '02', title: 'We Confirm', body: 'We review and confirm by WhatsApp or email, usually within a few hours.' },
               { n: '03', title: 'Attend & Heal', body: 'Arrive well rested. Your practitioner guides you through every step.' },
-              { n: '04', title: 'Aftercare',     body: 'Follow simple aftercare advice. Most patients feel benefits within 24 hours.' },
+              { n: '04', title: 'Aftercare', body: 'Follow simple aftercare advice. Most patients feel benefits within 24 hours.' },
             ]
             return (
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 relative">
@@ -263,13 +255,13 @@ export default async function HomePage() {
       </section>
 
       {/* ── Final CTA ─────────────────────────────────── */}
-      <section className="py-20 pattern-bg relative">
+      <section className="py-15 pattern-bg relative">
         <div className="absolute inset-0 bg-[#1a4a4a]/85" />
         <div className="container-site relative z-10 text-center text-white">
           <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif' }}>
             Ready to Begin Your Healing Journey?
           </h2>
-          <p className="text-white/70 max-w-xl mx-auto mb-8">
+          <p className="text-white/70 max-w-xl mx-auto mb-4">
             Book your appointment today and take the first step towards better health, in the way of the Sunnah.
           </p>
           <Link href="/book" className="inline-block bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-10 py-4 rounded-md transition-colors text-base">
