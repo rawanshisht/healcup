@@ -5,10 +5,10 @@ import { eq, asc } from 'drizzle-orm'
 import { Star, Shield, Heart, Clock, ChevronRight, Sparkles } from 'lucide-react'
 
 const BENEFITS = [
-  { icon: Heart,    title: 'Promotes Healing',      body: 'Stimulates blood flow, removes stagnant blood, and activates the body\'s natural healing response.' },
-  { icon: Shield,   title: 'Rooted in the Sunnah',  body: 'Hijama is a Prophetic medicine recommended by the Prophet ﷺ and practised for over 1,400 years.' },
-  { icon: Sparkles, title: 'Holistic Wellbeing',    body: 'Addresses physical ailments, stress, fatigue, and supports overall mental and spiritual wellbeing.' },
-  { icon: Star,     title: 'Skilled Practitioners', body: 'Our certified practitioners follow strict hygiene protocols and provide personalised, compassionate care.' },
+  { icon: Heart, title: 'Promotes Healing', body: 'Stimulates blood flow, removes stagnant blood, and activates the body\'s natural healing response.' },
+  { icon: Shield, title: 'Rooted in the Sunnah', body: 'Hijama is a Prophetic medicine recommended by the Prophet ﷺ and practised for over 1,400 years.' },
+  { icon: Sparkles, title: 'Holistic Wellbeing', body: 'Addresses physical ailments, stress, fatigue, and supports overall mental and spiritual wellbeing.' },
+  { icon: Star, title: 'Skilled Practitioners', body: 'Our certified practitioners follow strict hygiene protocols and provide personalised, compassionate care.' },
 ]
 
 const TESTIMONIALS = [
@@ -29,45 +29,77 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero ──────────────────────────────────────── */}
-      <section className="pattern-bg relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0d3535]/60 to-[#1a4a4a]/80" />
-        <div className="container-site relative z-10 py-24 md:py-36 text-center text-white">
-          <p className="text-[#c9a84c] text-xs tracking-[0.3em] uppercase mb-4 font-medium">
-            ﷽ &nbsp;In the Name of Allah
-          </p>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
-            Healing Through<br />
+      <section className="pattern-bg relative overflow-hidden min-h-screen flex flex-col py-4">
+        {/* Layered depth overlays */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a2c2c]/90 via-[#1a4a4a]/85 to-[#0d3535]/90" />
+        {/* Decorative radial glow */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[#c9a84c]/5 blur-3xl pointer-events-none" />
+
+        {/* All hero content in one unified block */}
+        <div className="container-site relative z-10 flex-1 flex flex-col items-center justify-center text-center text-white px-6 py-28 md:py-36">
+
+          {/* Bismillah badge */}
+          <div className="inline-flex items-center gap-3 mb-6">
+            <span className="h-px w-10 bg-[#c9a84c]/50" />
+            <p className="text-[#c9a84c] text-[11px] tracking-[0.35em] uppercase font-semibold">
+              ﷽ &nbsp;In the Name of Allah
+            </p>
+            <span className="h-px w-10 bg-[#c9a84c]/50" />
+          </div>
+
+          {/* Heading */}
+          <h1
+            className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.1] mb-3"
+            style={{ fontFamily: 'Georgia, serif' }}
+          >
+            Healing Through
+            <br />
             <span className="text-[#c9a84c]">the Sunnah</span>
           </h1>
-          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed">
+
+          {/* Gold divider */}
+          <div className="flex items-center justify-center gap-3 my-6">
+            <span className="h-px w-16 bg-gradient-to-r from-transparent to-[#c9a84c]/60" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#c9a84c]" />
+            <span className="h-px w-16 bg-gradient-to-l from-transparent to-[#c9a84c]/60" />
+          </div>
+
+          {/* Sub-heading */}
+          <p className="text-lg md:text-xl text-white/75 max-w-2xl mx-auto mb-12 leading-relaxed">
             Professional hijama (cupping therapy) in a safe, caring, and spiritually mindful environment.
             Rooted in Prophetic medicine. Grounded in modern hygiene standards.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Link
               href="/book"
-              className="bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-8 py-3.5 rounded-md transition-colors text-base"
+              className="bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-10 py-4 rounded-md transition-colors text-base shadow-lg shadow-black/20"
             >
               Book an Appointment
             </Link>
             <Link
               href="/how-it-works"
-              className="border border-white/40 hover:border-white text-white font-medium px-8 py-3.5 rounded-md transition-colors text-base flex items-center justify-center gap-2"
+              className="border border-white/30 hover:border-white/70 hover:bg-white/5 text-white font-medium px-10 py-4 rounded-md transition-colors text-base flex items-center justify-center gap-2"
             >
               How It Works <ChevronRight size={16} />
             </Link>
           </div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#faf7f2] to-transparent" />
-      </section>
 
-      {/* ── Hadith banner ─────────────────────────────── */}
-      <section className="bg-[#fdf6e3] border-y border-[#c9a84c]/30 py-8">
-        <div className="container-site text-center">
-          <p className="text-xl md:text-2xl font-semibold text-[#1a4a4a] italic" style={{ fontFamily: 'Georgia, serif' }}>
-            &ldquo;The best of your treatments is hijama (cupping).&rdquo;
-          </p>
-          <p className="mt-2 text-sm text-[#b8892a]">— Sahih al-Bukhari 5371, narrated by Ibn Abbas (رضي الله عنه)</p>
+          {/* Trust stats */}
+          <div className="grid grid-cols-3 gap-6 max-w-lg mx-auto mb-6">
+            {[
+              { value: '500+', label: 'Patients treated' },
+              { value: '100%', label: 'Sterile equipment' },
+              { value: '5★', label: 'Rated clinic' },
+            ].map(s => (
+              <div key={s.label}>
+                <p className="text-2xl font-bold text-[#c9a84c]" style={{ fontFamily: 'Georgia, serif' }}>{s.value}</p>
+                <p className="text-white/55 text-xs mt-1 tracking-wide">{s.label}</p>
+              </div>
+            ))}
+          </div>
+
         </div>
       </section>
 
@@ -159,22 +191,29 @@ export default async function HomePage() {
             <h2 className="text-3xl font-bold text-[#1a4a4a]" style={{ fontFamily: 'Georgia, serif' }}>How It Works</h2>
             <div className="gold-divider" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
-            {[
-              { n: '01', title: 'Book Online',   body: 'Fill in our short appointment request form — takes under 3 minutes.' },
-              { n: '02', title: 'We Confirm',    body: 'We review and confirm by WhatsApp or email, usually within a few hours.' },
+          {(() => {
+            const steps = [
+              { n: '01', title: 'Book Online', body: 'Fill in our short appointment request form — takes under 3 minutes.' },
+              { n: '02', title: 'We Confirm', body: 'We review and confirm by WhatsApp or email, usually within a few hours.' },
               { n: '03', title: 'Attend & Heal', body: 'Arrive well rested. Your practitioner guides you through every step.' },
-              { n: '04', title: 'Aftercare',     body: 'Follow simple aftercare advice. Most patients feel benefits within 24 hours.' },
-            ].map(step => (
-              <div key={step.n} className="text-center">
-                <div className="w-14 h-14 rounded-full bg-[#1a4a4a] text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold" style={{ fontFamily: 'Georgia, serif' }}>
-                  {step.n}
-                </div>
-                <h3 className="font-bold text-[#1a4a4a] mb-2" style={{ fontFamily: 'Georgia, serif' }}>{step.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{step.body}</p>
+              { n: '04', title: 'Aftercare', body: 'Follow simple aftercare advice. Most patients feel benefits within 24 hours.' },
+            ]
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 relative">
+                {/* Desktop connector line */}
+                <div className="hidden sm:block absolute top-7 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-[#e0d9cf] via-[#c9a84c]/40 to-[#e0d9cf]" aria-hidden="true" />
+                {steps.map((step, i) => (
+                  <div key={step.n} className="text-center relative">
+                    <div className="w-14 h-14 rounded-full bg-[#1a4a4a] text-white flex items-center justify-center mx-auto mb-4 text-lg font-bold shadow-md relative z-10" style={{ fontFamily: 'Georgia, serif' }}>
+                      {step.n}
+                    </div>
+                    <h3 className="font-bold text-[#1a4a4a] mb-2" style={{ fontFamily: 'Georgia, serif' }}>{step.title}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{step.body}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            )
+          })()}
           <div className="text-center mt-10">
             <Link href="/how-it-works" className="inline-flex items-center gap-2 text-[#1e5c5c] font-semibold hover:text-[#237070]">
               Full guide with pre & post care <ChevronRight size={16} />
@@ -193,12 +232,22 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {TESTIMONIALS.map(t => (
-              <div key={t.name} className="bg-white rounded-xl p-6 border border-[#e0d9cf] shadow-sm">
-                <div className="flex gap-0.5 mb-4">
+              <div key={t.name} className="bg-white rounded-xl p-6 border border-[#e0d9cf] shadow-sm relative overflow-hidden flex flex-col">
+                <span
+                  className="absolute top-2 right-4 text-8xl leading-none select-none pointer-events-none text-[#e8e3db]"
+                  style={{ fontFamily: 'Georgia, serif' }}
+                  aria-hidden="true"
+                >&ldquo;</span>
+                <div className="flex gap-0.5 mb-4 relative z-10">
                   {[...Array(5)].map((_, i) => <Star key={i} size={14} className="text-[#c9a84c] fill-[#c9a84c]" />)}
                 </div>
-                <p className="text-sm text-gray-700 italic leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
-                <p className="text-xs font-semibold text-[#1e5c5c]">— {t.name}</p>
+                <p className="text-sm text-gray-700 leading-relaxed mb-5 flex-1 relative z-10">{t.text}</p>
+                <div className="flex items-center gap-3 relative z-10 pt-4 border-t border-[#f0ebe3]">
+                  <div className="w-8 h-8 rounded-full bg-[#e6f4f4] flex items-center justify-center text-xs font-bold text-[#1e5c5c] shrink-0">
+                    {t.name.charAt(0)}
+                  </div>
+                  <p className="text-xs font-semibold text-[#1e5c5c]">{t.name}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -206,13 +255,13 @@ export default async function HomePage() {
       </section>
 
       {/* ── Final CTA ─────────────────────────────────── */}
-      <section className="py-20 pattern-bg relative">
+      <section className="py-15 pattern-bg relative">
         <div className="absolute inset-0 bg-[#1a4a4a]/85" />
         <div className="container-site relative z-10 text-center text-white">
           <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif' }}>
             Ready to Begin Your Healing Journey?
           </h2>
-          <p className="text-white/70 max-w-xl mx-auto mb-8">
+          <p className="text-white/70 max-w-xl mx-auto mb-4">
             Book your appointment today and take the first step towards better health, in the way of the Sunnah.
           </p>
           <Link href="/book" className="inline-block bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-10 py-4 rounded-md transition-colors text-base">

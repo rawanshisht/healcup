@@ -7,16 +7,32 @@ import type { Appointment } from '@/lib/schema'
 import { Phone, Mail, ChevronDown, ChevronUp } from 'lucide-react'
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:     'bg-[#fdf6e3] text-[#b8892a] border-[#c9a84c]/40',
-  confirmed:   'bg-[#e6f4f4] text-[#1e5c5c] border-[#2a8a8a]/40',
-  cancelled:   'bg-red-50 text-red-700 border-red-200',
+  pending: 'bg-[#fdf6e3] text-[#b8892a] border-[#c9a84c]/40',
+  confirmed: 'bg-[#e6f4f4] text-[#1e5c5c] border-[#2a8a8a]/40',
+  cancelled: 'bg-red-50 text-red-700 border-red-200',
   rescheduled: 'bg-purple-50 text-purple-700 border-purple-200',
 }
 
+const STATUS_LABELS: Record<string, string> = {
+  pending: 'Pending',
+  confirmed: 'Confirmed',
+  cancelled: 'Cancelled',
+  rescheduled: 'Rescheduled',
+}
+
+const SCREENING_LABELS: Record<string, string> = {
+  blood_thinners: 'Blood thinners / anticoagulants',
+  skin_infection: 'Active skin infection or open wound',
+  fever: 'Fever or acute illness',
+  pregnant: 'Pregnancy',
+  anaemia: 'Severe anaemia / blood disorder',
+  recent_surgery: 'Surgery within the last 4 weeks',
+}
+
 export default function AppointmentList({ initialAppointments }: { initialAppointments: Appointment[] }) {
-  const [appts, setAppts]     = useState(initialAppointments)
+  const [appts, setAppts] = useState(initialAppointments)
   const [expanded, setExpanded] = useState<number | null>(null)
-  const [notes, setNotes]     = useState<Record<number, string>>({})
+  const [notes, setNotes] = useState<Record<number, string>>({})
 
   const updateStatus = async (id: number, status: string) => {
     const res = await fetch(`/api/appointments/${id}`, {
@@ -43,7 +59,13 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
   }
 
   if (appts.length === 0) {
-    return <div className="bg-white rounded-xl border border-[#e0d9cf] p-10 text-center text-gray-400 text-sm">No appointments yet.</div>
+    return (
+      <div className="bg-white rounded-xl border border-[#e0d9cf] p-12 text-center">
+        <p className="text-2xl mb-2">📋</p>
+        <p className="text-gray-500 text-sm font-medium">No appointments yet</p>
+        <p className="text-gray-400 text-xs mt-1">Appointments will appear here once patients book online.</p>
+      </div>
+    )
   }
 
   return (
@@ -56,7 +78,7 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
           >
             <div className="flex items-center gap-3 flex-wrap">
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${STATUS_STYLES[a.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                {a.status}
+                {STATUS_LABELS[a.status] ?? a.status}
               </span>
               <div>
                 <p className="font-semibold text-[#1a4a4a] text-sm">{a.patientName}</p>
@@ -104,10 +126,15 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
                 const flags = screening ? Object.entries(screening).filter(([, v]) => v) : []
                 return flags.length > 0 ? (
                   <div className="bg-[#fff9ed] border border-[#c9a84c]/30 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-[#b8892a] mb-1.5">⚠ Health Screening Flags</p>
-                    {flags.map(([k]) => (
-                      <p key={k} className="text-xs text-gray-600">• {k.replace(/_/g, ' ')}</p>
-                    ))}
+                    <p className="text-xs font-semibold text-[#b8892a] mb-2">⚠ Health Screening Flags</p>
+                    <ul className="space-y-1">
+                      {flags.map(([k]) => (
+                        <li key={k} className="text-xs text-gray-700 flex items-start gap-1.5">
+                          <span className="text-[#b8892a] shrink-0 mt-0.5">•</span>
+                          {SCREENING_LABELS[k] ?? k.replace(/_/g, ' ')}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 ) : null
               })()}
@@ -129,9 +156,17 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
               <div className="flex gap-2 flex-wrap">
                 {a.status !== 'confirmed' && (
                   <button onClick={() => updateStatus(a.id, 'confirmed')} className="text-xs bg-[#237070] hover:bg-[#1e5c5c] text-white font-semibold px-4 py-2 rounded-lg transition-colors">
-                    ✓ Confirm
+                    ✓ Accept
                   </button>
                 )}
+                <a
+                  href={`https://wa.me/${a.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${a.patientName}, regarding your hijama appointment on ${a.preferredDate} at ${a.preferredTime} — we'd like to confirm or reschedule your booking. Please let us know your availability.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs bg-[#25D366] hover:bg-[#1fb855] text-white font-semibold px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-1"
+                >
+                  Contact Patient
+                </a>
                 {a.status !== 'cancelled' && (
                   <button onClick={() => updateStatus(a.id, 'cancelled')} className="text-xs bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors">
                     Cancel
@@ -139,7 +174,7 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
                 )}
                 {a.status !== 'rescheduled' && (
                   <button onClick={() => updateStatus(a.id, 'rescheduled')} className="text-xs bg-purple-500 hover:bg-purple-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors">
-                    Reschedule
+                    Mark Rescheduled
                   </button>
                 )}
                 {a.status !== 'pending' && (
