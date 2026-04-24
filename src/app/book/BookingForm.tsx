@@ -582,7 +582,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
                 {...register('patientName')}
                 placeholder="e.g. Fatima Al-Hassan"
                 className="w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2"
-                style={{ border: '1.5px solid #d6d0c6', background: '#fff', focusRingColor: '#1a4a4a' }}
+                style={{ border: '1.5px solid #d6d0c6', background: '#fff' }}
               />
               {errors.patientName && <p className="text-red-500 text-xs mt-1">{errors.patientName.message}</p>}
             </div>
