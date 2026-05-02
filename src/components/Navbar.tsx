@@ -40,7 +40,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-0.5">
+        <nav className="hidden lg:flex items-center gap-0.5">
           {links.map(l => (
             <Link
               key={l.href}
@@ -60,7 +60,7 @@ export default function Navbar() {
         </nav>
 
         {/* CTA + phone */}
-        <div className="hidden md:flex items-center gap-4 shrink-0">
+        <div className="hidden lg:flex items-center gap-4 shrink-0">
           {phone && (
             <a
               href={`tel:${phone}`}
@@ -80,7 +80,7 @@ export default function Navbar() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden p-2 text-[#1a4a4a] rounded-md hover:bg-[#f0f9f9] active:bg-[#e6f4f4] transition-colors"
+          className="lg:hidden p-2 text-[#1a4a4a] rounded-md hover:bg-[#f0f9f9] active:bg-[#e6f4f4] transition-colors"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
@@ -90,7 +90,7 @@ export default function Navbar() {
 
       {/* Mobile drawer */}
       {open && (
-        <div className="md:hidden border-t border-[#e8e3db] bg-white px-4 pb-4 pt-2 space-y-0.5">
+        <div className="lg:hidden border-t border-[#e8e3db] bg-white px-4 pb-4 pt-2 space-y-0.5">
           {links.map(l => (
             <Link
               key={l.href}

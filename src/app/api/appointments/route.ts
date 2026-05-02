@@ -15,7 +15,7 @@ const schema = z.object({
   preferredTime:   z.string(),
   reason:          z.string().nullable().optional(),
   howHeard:        z.string().nullable().optional(),
-  screeningAnswers: z.record(z.string(), z.boolean()),
+  screeningAnswers: z.record(z.string(), z.union([z.boolean(), z.string().nullable(), z.null()])),
   consentGiven:    z.boolean(),
 })
 

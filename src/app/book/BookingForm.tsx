@@ -1,116 +1,77 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { useSearchParams } from 'next/navigation'
-import { CheckCircle2, AlertTriangle, MessageCircle, Lock } from 'lucide-react'
+import { CheckCircle2, AlertTriangle, MessageCircle, Lock, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Service } from '@/lib/schema'
 
 const SCREENING_QUESTIONS = [
-  { id: 'blood_thinners', label: 'Blood thinners or anticoagulant medication', detail: 'e.g. warfarin, rivaroxaban, daily aspirin' },
-  { id: 'skin_infection', label: 'Active skin infection or open wound', detail: 'at or near the intended treatment area' },
-  { id: 'fever', label: 'Fever, flu, or acute illness', detail: 'currently unwell on the day of booking' },
-  { id: 'pregnant', label: 'Pregnancy', detail: 'currently pregnant or trying to conceive' },
-  { id: 'anaemia', label: 'Severe anaemia or blood/clotting disorder', detail: 'diagnosed condition affecting blood' },
-  { id: 'recent_surgery', label: 'Surgery within the last 4 weeks', detail: 'any surgical procedure in the past month' },
+  { id: 'blood_thinners',      label: 'Blood thinners or anticoagulant medication',   detail: 'e.g. warfarin, rivaroxaban, daily aspirin' },
+  { id: 'high_blood_pressure', label: 'High blood pressure (hypertension)',            detail: 'currently diagnosed with or being treated for high blood pressure' },
+  { id: 'skin_infection',      label: 'Active skin infection or open wound',           detail: 'at or near the intended treatment area' },
+  { id: 'fever',               label: 'Fever, flu, or acute illness',                  detail: 'currently unwell on the day of booking' },
+  { id: 'pregnant',            label: 'Pregnancy',                                     detail: 'currently pregnant or trying to conceive' },
+  { id: 'anaemia',             label: 'Severe anaemia or blood/clotting disorder',     detail: 'diagnosed condition affecting blood' },
+  { id: 'recent_surgery',      label: 'Surgery within the last 4 weeks',              detail: 'any surgical procedure in the past month' },
 ]
 
-const DRUM_H   = 42
-const DRUM_VIS = 5
-const D_HOURS  = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
-const D_MINS   = ['00', '30']
-const D_AMPM   = ['AM', 'PM']
+const LAST_HIJAMA_OPTIONS = [
+  'This will be my first hijama session',
+  'Less than 1 month ago',
+  '1–3 months ago',
+  '3–6 months ago',
+  'More than 6 months ago',
+  "I'm not sure",
+]
 
-function Drum({ items, value, onChange, width }: {
-  items: string[]
-  value: string
-  onChange: (v: string) => void
-  width: number
-}) {
-  const listRef = useRef<HTMLDivElement>(null)
+const DEPOSIT_AMOUNT = 20
 
-  const scrollTo = (i: number) => {
-    const el = listRef.current
-    if (!el) return
-    el.style.scrollBehavior = 'auto'
-    el.scrollTop = i * DRUM_H
-    requestAnimationFrame(() => { if (el) el.style.scrollBehavior = 'smooth' })
-  }
+const D_HOURS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+const D_MINS  = ['00', '30']
+const D_AMPM  = ['AM', 'PM']
 
-  useEffect(() => { scrollTo(items.indexOf(value)) }, [])
-
-  const onScroll = () => {
-    const el = listRef.current
-    if (!el) return
-    const clamped = Math.max(0, Math.min(items.length - 1, Math.round(el.scrollTop / DRUM_H)))
-    if (items[clamped] !== value) onChange(items[clamped])
-  }
-
-  return (
-    <div style={{ width, position: 'relative', userSelect: 'none', flexShrink: 0 }}>
-      {/* Selection band */}
-      <div style={{ position: 'absolute', left: 0, right: 0, top: DRUM_H * Math.floor(DRUM_VIS / 2), height: DRUM_H, pointerEvents: 'none', zIndex: 2, borderTop: '1.5px solid rgba(26,74,74,0.22)', borderBottom: '1.5px solid rgba(26,74,74,0.22)' }} />
-      {/* Fade masks */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: DRUM_H * 2, background: 'linear-gradient(to bottom, #f2f0ea, transparent)', zIndex: 1, pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: DRUM_H * 2, background: 'linear-gradient(to top, #f2f0ea, transparent)', zIndex: 1, pointerEvents: 'none' }} />
-      {/* Scroll list */}
-      <div
-        ref={listRef}
-        onScroll={onScroll}
-        className="drum-hide"
-        style={{ height: DRUM_H * DRUM_VIS, overflowY: 'scroll', overflowX: 'hidden', scrollSnapType: 'y mandatory', scrollBehavior: 'smooth' }}
-      >
-        <div style={{ height: DRUM_H * Math.floor(DRUM_VIS / 2) }} />
-        {items.map((item, i) => (
-          <div
-            key={item}
-            onClick={() => { onChange(item); scrollTo(i) }}
-            style={{ height: DRUM_H, scrollSnapAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: value === item ? 700 : 400, color: value === item ? '#1a4a4a' : '#8a9e98', cursor: 'pointer', transition: 'color 0.12s, font-weight 0.12s' }}
-          >
-            {item}
-          </div>
-        ))}
-        <div style={{ height: DRUM_H * Math.floor(DRUM_VIS / 2) }} />
-      </div>
-    </div>
-  )
-}
-
-function IOSTimePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+function ArrowTimePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const parse = (v: string) => {
     const m = v.match(/^(\d+):(\d+)\s*(AM|PM)/i)
-    return m ? { h: m[1], m: m[2], ap: m[3].toUpperCase() as 'AM' | 'PM' } : { h: '9', m: '00', ap: 'AM' as const }
+    return m ? { h: m[1], mi: m[2], ap: m[3].toUpperCase() as 'AM' | 'PM' } : { h: '9', mi: '00', ap: 'AM' as const }
   }
-  const init = parse(value)
+  const init = parse(value || '')
   const [hour, setHour] = useState(init.h)
-  const [min,  setMin]  = useState(init.m)
+  const [min,  setMin]  = useState(init.mi)
   const [ampm, setAmpm] = useState<'AM' | 'PM'>(init.ap)
 
   useEffect(() => { onChange(`${hour}:${min} ${ampm}`) }, [hour, min, ampm])
 
+  const cycle = (items: string[], current: string, dir: 1 | -1) =>
+    items[(items.indexOf(current) + dir + items.length) % items.length]
+
+  const btn = 'p-1 rounded hover:bg-[#e6f4f4] text-[#4a5e58] hover:text-[#1a4a4a] transition-colors flex items-center justify-center'
+
   return (
-    <>
-      <style>{`.drum-hide::-webkit-scrollbar{display:none}.drum-hide{-ms-overflow-style:none;scrollbar-width:none}`}</style>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, background: '#f2f0ea', borderRadius: 12, padding: '8px 0', overflow: 'hidden' }}>
-        <Drum items={D_HOURS} value={hour} onChange={setHour} width={90} />
-        <div style={{ fontSize: 22, fontWeight: 700, color: '#4a5e58', flexShrink: 0 }}>:</div>
-        <Drum items={D_MINS}  value={min}  onChange={setMin}  width={80} />
-        <Drum items={D_AMPM}  value={ampm} onChange={v => setAmpm(v as 'AM' | 'PM')} width={68} />
-      </div>
-      {/* Selected time preview */}
-      <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'rgba(26,74,74,0.05)', borderRadius: 9 }}>
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="6.5" stroke="#1a4a4a" strokeWidth="1.3" />
-          <path d="M8 5v3l2 2" stroke="#1a4a4a" strokeWidth="1.3" strokeLinecap="round" />
-        </svg>
-        <span style={{ fontSize: 15, fontWeight: 700, color: '#1a4a4a', fontFamily: 'var(--font-serif), Georgia, serif' }}>
-          {hour}:{min} {ampm}
-        </span>
-      </div>
-    </>
+    <div
+      className="flex items-center w-full rounded-xl px-3 py-3 text-sm"
+      style={{ border: '1.5px solid #d6d0c6', background: '#fff' }}
+    >
+      <button type="button" className={btn} onClick={() => setHour(cycle(D_HOURS, hour, -1))}><ChevronLeft size={13} /></button>
+      <span className="w-7 text-center font-bold" style={{ color: '#1a4a4a' }}>{hour}</span>
+      <button type="button" className={btn} onClick={() => setHour(cycle(D_HOURS, hour, 1))}><ChevronRight size={13} /></button>
+
+      <span className="mx-1 font-bold" style={{ color: '#4a5e58' }}>:</span>
+
+      <button type="button" className={btn} onClick={() => setMin(cycle(D_MINS, min, -1))}><ChevronLeft size={13} /></button>
+      <span className="w-8 text-center font-bold" style={{ color: '#1a4a4a' }}>{min}</span>
+      <button type="button" className={btn} onClick={() => setMin(cycle(D_MINS, min, 1))}><ChevronRight size={13} /></button>
+
+      <div className="flex-1" />
+
+      <button type="button" className={btn} onClick={() => setAmpm(cycle(D_AMPM, ampm, -1) as 'AM' | 'PM')}><ChevronLeft size={13} /></button>
+      <span className="w-9 text-center font-bold" style={{ color: '#1a4a4a' }}>{ampm}</span>
+      <button type="button" className={btn} onClick={() => setAmpm(cycle(D_AMPM, ampm, 1) as 'AM' | 'PM')}><ChevronRight size={13} /></button>
+    </div>
   )
 }
 
@@ -125,11 +86,13 @@ const schema = z.object({
   reason: z.string().optional(),
   howHeard: z.string().optional(),
   blood_thinners: z.boolean(),
+  high_blood_pressure: z.boolean(),
   skin_infection: z.boolean(),
   fever: z.boolean(),
   pregnant: z.boolean(),
   anaemia: z.boolean(),
   recent_surgery: z.boolean(),
+  lastHijama: z.string().min(1, 'Please select when you last had a hijama session'),
   consent: z.boolean().refine(v => v === true, 'Please agree to the consent form to continue'),
 })
 
@@ -141,6 +104,7 @@ const CONSENT_POINTS = [
   'I understand that temporary bruising and skin marks are a normal part of treatment.',
   'I consent to treatment and understand the practitioner may pause or stop if needed for my safety.',
   'I have read the pre-appointment and aftercare instructions.',
+  `The £${DEPOSIT_AMOUNT} deposit is non-refundable if I cancel within 1–2 hours of my scheduled appointment time.`,
 ]
 
 function GoldCheck() {
@@ -183,8 +147,9 @@ export default function BookingForm({ services }: { services: Service[] }) {
     defaultValues: {
       serviceId: defaultService,
       email: '',
-      blood_thinners: false, skin_infection: false,
+      blood_thinners: false, high_blood_pressure: false, skin_infection: false,
       fever: false, pregnant: false, anaemia: false, recent_surgery: false,
+      lastHijama: '',
       consent: false,
     },
   })
@@ -204,7 +169,9 @@ export default function BookingForm({ services }: { services: Service[] }) {
     if (ok) { setStep(3); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   }
 
-  const goToStep4 = () => {
+  const goToStep4 = async () => {
+    const ok = await trigger(['lastHijama'])
+    if (!ok) return
     const hasFlag = SCREENING_QUESTIONS.some(q => watch(q.id as keyof FormData) as boolean)
     setFlagged(hasFlag)
     setStep(4)
@@ -214,9 +181,10 @@ export default function BookingForm({ services }: { services: Service[] }) {
   const onSubmit = async (data: FormData) => {
     setLoading(true)
     try {
-      const screeningAnswers = Object.fromEntries(
-        SCREENING_QUESTIONS.map(q => [q.id, data[q.id as keyof FormData] as boolean])
-      )
+      const screeningAnswers = {
+        ...Object.fromEntries(SCREENING_QUESTIONS.map(q => [q.id, data[q.id as keyof FormData] as boolean])),
+        lastHijama: data.lastHijama || null,
+      }
       const res = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -260,7 +228,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
           <h2 className="text-2xl font-bold mb-1" style={{ fontFamily: 'var(--font-serif), Georgia, serif', color: '#1a4a4a' }}>
             Appointment Provisionally Held
           </h2>
-          <p className="text-sm font-semibold mb-6" style={{ color: '#c9a84c' }}>JazakAllahu Khayran — your spot is provisionally held</p>
+          <p className="text-sm text-gray-500 mb-6">Your spot is provisionally held — we will be in touch to confirm.</p>
 
           {/* Receipt */}
           <div className="rounded-xl overflow-hidden max-w-sm mx-auto mb-5" style={{ border: '1px solid #e6e2d8' }}>
@@ -278,13 +246,17 @@ export default function BookingForm({ services }: { services: Service[] }) {
                   <span className="font-semibold" style={{ color: '#1a2420' }}>{val}</span>
                 </div>
               ))}
+              <div className="flex justify-between items-center px-4 py-2.5" style={{ borderBottom: '1px solid #f0ece4' }}>
+                <span className="text-sm" style={{ color: '#8a9e98' }}>Deposit</span>
+                <span className="font-bold text-sm" style={{ color: '#b8892a' }}>£{DEPOSIT_AMOUNT} — payment link to follow</span>
+              </div>
               <div className="flex justify-between items-center px-4 py-3">
                 <span className="text-sm font-semibold" style={{ color: '#4a5e58' }}>Total</span>
                 <div className="text-right">
                   <p style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 24, fontWeight: 700, color: '#1a4a4a', lineHeight: 1 }}>
                     £{Number(selectedService?.price ?? 0).toFixed(0)}
                   </p>
-                  <p className="text-xs mt-0.5" style={{ color: '#8a9e98' }}>Cash or card at clinic</p>
+                  <p className="text-xs mt-0.5" style={{ color: '#8a9e98' }}>£{Math.max(0, Number(selectedService?.price ?? 0) - DEPOSIT_AMOUNT)} remaining at clinic</p>
                 </div>
               </div>
             </div>
@@ -294,8 +266,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
           <div className="rounded-xl p-4 max-w-sm mx-auto mb-5 text-sm text-left" style={{ background: '#1a4a4a' }}>
             <p className="font-semibold mb-1.5 text-white">What happens next?</p>
             <ul className="space-y-1.5 text-xs" style={{ color: 'rgba(255,255,255,0.75)' }}>
-              <li>✓ We will send a WhatsApp to lock in your appointment during clinic hours (Mon–Sat, 9am–6pm)</li>
-              <li>✓ Booked outside clinic hours? We will be in touch the next working morning</li>
+              <li>✓ We will confirm your appointment within 24 hours via WhatsApp or phone</li>
               <li>✓ A reminder will be sent 24 hours before your appointment</li>
               {clinicPhone && <li>✓ Questions in the meantime? Call us on {clinicPhone}</li>}
             </ul>
@@ -366,7 +337,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
                   type="button"
                   onClick={() => done && setStep(n)}
                   disabled={!done}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-opacity"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-opacity"
                   style={{
                     background: done ? '#c9a84c' : active ? '#fff' : 'rgba(255,255,255,0.15)',
                     color: done ? '#fff' : active ? '#1a4a4a' : 'rgba(255,255,255,0.45)',
@@ -580,7 +551,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
               <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1a2420' }}>Full Name *</label>
               <input
                 {...register('patientName')}
-                placeholder="e.g. Fatima Al-Hassan"
+                placeholder="Your full name"
                 className="w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2"
                 style={{ border: '1.5px solid #d6d0c6', background: '#fff' }}
               />
@@ -651,35 +622,27 @@ export default function BookingForm({ services }: { services: Service[] }) {
 
             <SectionDivider label="Appointment" />
 
-            {/* Date */}
-            <div>
-              <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1a2420' }}>Preferred Date *</label>
-              <input
-                {...register('preferredDate')}
-                type="date"
-                min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
-                className="w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2"
-                style={{ border: '1.5px solid #d6d0c6', background: '#fff' }}
-              />
-              {errors.preferredDate && <p className="text-red-500 text-xs mt-1">{errors.preferredDate.message}</p>}
-              {/* Sunnah note */}
-              <div className="mt-2 px-3 py-2.5 rounded-lg flex items-start gap-2" style={{ background: '#fdf6e3', border: '1px solid rgba(201,168,76,0.35)' }}>
-                <span className="text-sm shrink-0" style={{ color: '#c9a84c' }}>✦</span>
-                <p className="text-xs leading-relaxed" style={{ color: '#7a6040' }}>
-                  You may book any date. The <strong>17th, 19th &amp; 21st</strong> of the Arabic lunar month are recommended Sunnah days — we will confirm your appointment after booking.
-                </p>
+            {/* Date & Time — same row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+              <div>
+                <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1a2420' }}>Preferred Date *</label>
+                <input
+                  {...register('preferredDate')}
+                  type="date"
+                  min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
+                  className="w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2"
+                  style={{ border: '1.5px solid #d6d0c6', background: '#fff' }}
+                />
+                {errors.preferredDate && <p className="text-red-500 text-xs mt-1">{errors.preferredDate.message}</p>}
               </div>
-            </div>
-
-            {/* Time — iOS drum wheel */}
-            <div>
-              <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1a2420' }}>Preferred Time *</label>
-              <IOSTimePicker
-                value={selectedTime || ''}
-                onChange={v => setValue('preferredTime', v, { shouldValidate: true })}
-              />
-              <p className="text-xs mt-2" style={{ color: '#a09890' }}>Clinic hours: Mon–Sat, 9:00 am – 6:00 pm</p>
-              {errors.preferredTime && <p className="text-red-500 text-xs mt-1">{errors.preferredTime.message}</p>}
+              <div>
+                <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1a2420' }}>Preferred Time *</label>
+                <ArrowTimePicker
+                  value={selectedTime || ''}
+                  onChange={v => setValue('preferredTime', v, { shouldValidate: true })}
+                />
+                {errors.preferredTime && <p className="text-red-500 text-xs mt-1">{errors.preferredTime.message}</p>}
+              </div>
             </div>
 
             <SectionDivider label="Additional Notes" />
@@ -790,6 +753,35 @@ export default function BookingForm({ services }: { services: Service[] }) {
               If none of the above apply to you, select No for each and continue.
             </p>
 
+            {/* Last hijama session */}
+            <div className="rounded-xl px-4 py-4" style={{ background: '#fff', border: '1.5px solid #d6d0c6' }}>
+              <label className="block text-sm font-semibold mb-3" style={{ color: '#1a2420' }}>
+                When was your last hijama session?
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {LAST_HIJAMA_OPTIONS.map(opt => {
+                  const checked = watch('lastHijama') === opt
+                  return (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => setValue('lastHijama', opt)}
+                      className="text-left px-3 py-2.5 rounded-lg text-sm transition-all"
+                      style={{
+                        border: `1.5px solid ${checked ? '#1a4a4a' : '#d6d0c6'}`,
+                        background: checked ? 'rgba(26,74,74,0.08)' : '#fff',
+                        color: checked ? '#1a4a4a' : '#4a5e58',
+                        fontWeight: checked ? 600 : 400,
+                      }}
+                    >
+                      {opt}
+                    </button>
+                  )
+                })}
+              </div>
+              {errors.lastHijama && <p className="text-red-500 text-xs mt-2">{errors.lastHijama.message}</p>}
+            </div>
+
             <div className="flex gap-3">
               <button
                 type="button"
@@ -867,18 +859,35 @@ export default function BookingForm({ services }: { services: Service[] }) {
                       <span className="font-semibold" style={{ color: '#1a2420' }}>{val}</span>
                     </div>
                   ))}
+                  <div className="flex justify-between items-center px-4 py-2.5" style={{ borderBottom: '1px solid #f0ece4' }}>
+                    <span className="text-sm" style={{ color: '#8a9e98' }}>Deposit (due now)</span>
+                    <span className="font-bold text-sm" style={{ color: '#b8892a' }}>£{DEPOSIT_AMOUNT}</span>
+                  </div>
+                  <div className="flex justify-between items-center px-4 py-2.5" style={{ borderBottom: '1px solid #f0ece4' }}>
+                    <span className="text-sm" style={{ color: '#8a9e98' }}>Remaining balance</span>
+                    <span className="font-semibold text-sm" style={{ color: '#4a5e58' }}>£{Math.max(0, Number(selectedService.price) - DEPOSIT_AMOUNT)} at clinic</span>
+                  </div>
                   <div className="flex justify-between items-center px-4 py-3">
                     <span className="text-sm font-semibold" style={{ color: '#4a5e58' }}>Total</span>
-                    <div className="text-right">
-                      <p style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 26, fontWeight: 700, color: '#1a4a4a', lineHeight: 1 }}>
-                        £{Number(selectedService.price).toFixed(0)}
-                      </p>
-                      <p className="text-xs mt-0.5" style={{ color: '#a09890' }}>Cash or card at clinic</p>
-                    </div>
+                    <p style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 26, fontWeight: 700, color: '#1a4a4a', lineHeight: 1 }}>
+                      £{Number(selectedService.price).toFixed(0)}
+                    </p>
                   </div>
                 </div>
               </div>
             )}
+
+            {/* Deposit notice */}
+            <div className="rounded-xl p-4 flex gap-3 items-start" style={{ background: '#fdf6e3', border: '1.5px solid rgba(201,168,76,0.5)' }}>
+              <span className="text-lg shrink-0 mt-0.5">💳</span>
+              <div>
+                <p className="text-sm font-semibold mb-1" style={{ color: '#b8892a' }}>£{DEPOSIT_AMOUNT} deposit required to confirm</p>
+                <p className="text-xs leading-relaxed" style={{ color: '#6b5a3a' }}>
+                  After booking, we will send a secure payment link via WhatsApp or email to collect your £{DEPOSIT_AMOUNT} deposit.
+                  This secures your appointment slot. The deposit is non-refundable if cancelled within 1–2 hours of your appointment.
+                </p>
+              </div>
+            </div>
 
             {/* Consent */}
             <div>

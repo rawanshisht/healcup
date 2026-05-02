@@ -17,7 +17,7 @@ export default async function ServicesPage() {
   return (
     <>
       {/* ── Header ─────────────────────────────────────── */}
-      <section className="pattern-bg relative py-20 text-center text-white">
+      <section className="pattern-bg relative py-12 sm:py-16 md:py-20 text-center text-white">
         <div className="absolute inset-0 bg-[#1a4a4a]/80" />
         <div className="container-site relative z-10">
           <p className="text-[#c9a84c] text-xs tracking-widest uppercase font-semibold mb-2">Transparent Pricing</p>
@@ -27,7 +27,7 @@ export default async function ServicesPage() {
       </section>
 
       {/* ── Cards ──────────────────────────────────────── */}
-      <section className="py-14 pattern-light">
+      <section className="py-10 sm:py-12 md:py-14 pattern-light">
         <div className="container-site max-w-4xl mx-auto px-4">
           <div className="flex flex-col gap-3 md:gap-3.5">
             {allServices.map(s => (

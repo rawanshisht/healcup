@@ -211,12 +211,7 @@ export default function ServicesManager({ initialServices }: { initialServices: 
             ) : (
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-[#1a4a4a] text-sm">{s.name}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full border ${s.active ? 'bg-[#e6f4f4] text-[#1e5c5c] border-[#2a8a8a]/30' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
-                      {s.active ? 'Active' : 'Hidden'}
-                    </span>
-                  </div>
+                  <span className="font-semibold text-[#1a4a4a] text-sm">{s.name}</span>
                   {s.description && (
                     <p className="text-xs text-gray-500 mt-1 line-clamp-2">{s.description}</p>
                   )}
@@ -225,14 +220,24 @@ export default function ServicesManager({ initialServices }: { initialServices: 
                     {s.restrictions ? ` · ${s.restrictions}` : ''}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <button onClick={() => toggleActive(s)} className="text-xs text-gray-400 hover:text-[#237070] transition-colors">
-                    {s.active ? 'Hide' : 'Show'}
+                <div className="flex items-center gap-3 shrink-0">
+                  {/* Live on site toggle */}
+                  <button
+                    onClick={() => toggleActive(s)}
+                    title={s.active ? 'Visible on website — click to hide' : 'Hidden from website — click to show'}
+                    className="flex items-center gap-1.5 group"
+                  >
+                    <span className={`text-[10px] font-semibold transition-colors ${s.active ? 'text-[#237070]' : 'text-gray-400'}`}>
+                      {s.active ? 'Live' : 'Off'}
+                    </span>
+                    <div className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${s.active ? 'bg-[#2a8a8a]' : 'bg-gray-300'}`}>
+                      <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${s.active ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
+                    </div>
                   </button>
-                  <button onClick={() => startEdit(s)} className="p-1.5 text-gray-400 hover:text-[#1a4a4a] transition-colors">
+                  <button onClick={() => startEdit(s)} title="Edit" className="p-1.5 text-gray-400 hover:text-[#1a4a4a] transition-colors">
                     <Pencil size={14} />
                   </button>
-                  <button onClick={() => setConfirmDelete({ id: s.id, name: s.name })} className="p-1.5 text-gray-400 hover:text-red-500 transition-colors">
+                  <button onClick={() => setConfirmDelete({ id: s.id, name: s.name })} title="Delete" className="p-1.5 text-gray-400 hover:text-red-500 transition-colors">
                     <Trash2 size={14} />
                   </button>
                 </div>

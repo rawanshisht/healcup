@@ -6,7 +6,7 @@ import { Star, Shield, Heart, Clock, ChevronRight, Sparkles } from 'lucide-react
 
 const BENEFITS = [
   { icon: Heart, title: 'Promotes Healing', body: 'Stimulates blood flow, removes stagnant blood, and activates the body\'s natural healing response.' },
-  { icon: Shield, title: 'Rooted in the Sunnah', body: 'Hijama is a Prophetic medicine recommended by the Prophet ﷺ and practised for over 1,400 years.' },
+  { icon: Shield, title: 'A Healing Tradition', body: 'Hijama has been practised for over 1,400 years and is recognised for its effectiveness across cultures and traditions.' },
   { icon: Sparkles, title: 'Holistic Wellbeing', body: 'Addresses physical ailments, stress, fatigue, and supports overall mental and spiritual wellbeing.' },
   { icon: Star, title: 'Skilled Practitioners', body: 'Our certified practitioners follow strict hygiene protocols and provide personalised, compassionate care.' },
 ]
@@ -17,7 +17,6 @@ const TESTIMONIALS = [
   { name: 'Sister Maryam H.', text: 'The clinic is spotlessly clean, the sisters are kind and knowledgeable. It felt like a truly healing experience — body and soul.' },
 ]
 
-const SUNNAH_DAYS = [17, 19, 21]
 
 export default async function HomePage() {
   const activeServices = await db
@@ -36,7 +35,7 @@ export default async function HomePage() {
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[#c9a84c]/5 blur-3xl pointer-events-none" />
 
         {/* All hero content in one unified block */}
-        <div className="container-site relative z-10 flex-1 flex flex-col items-center justify-center text-center text-white px-6 py-28 md:py-36">
+        <div className="container-site relative z-10 flex-1 flex flex-col items-center justify-center text-center text-white px-6 py-14 sm:py-20 md:py-28 lg:py-36">
 
           {/* Bismillah badge */}
           <div className="inline-flex items-center gap-3 mb-6">
@@ -49,11 +48,11 @@ export default async function HomePage() {
 
           {/* Heading */}
           <h1
-            className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.1] mb-3"
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-3"
             style={{ fontFamily: 'Georgia, serif' }}
           >
             Healing Through
-            <br />
+            <br className="hidden sm:block" />{' '}
             <span className="text-[#c9a84c]">the Sunnah</span>
           </h1>
 
@@ -65,7 +64,7 @@ export default async function HomePage() {
           </div>
 
           {/* Sub-heading */}
-          <p className="text-lg md:text-xl text-white/75 max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="text-sm sm:text-lg md:text-xl text-white/75 max-w-2xl mx-auto mb-10 sm:mb-12 leading-relaxed">
             Professional hijama (cupping therapy) in a safe, caring, and spiritually mindful environment.
             Rooted in Prophetic medicine. Grounded in modern hygiene standards.
           </p>
@@ -74,13 +73,13 @@ export default async function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Link
               href="/book"
-              className="bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-10 py-4 rounded-md transition-colors text-base shadow-lg shadow-black/20"
+              className="bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-7 py-3.5 sm:px-10 sm:py-4 rounded-md transition-colors text-sm sm:text-base shadow-lg shadow-black/20"
             >
               Book an Appointment
             </Link>
             <Link
               href="/how-it-works"
-              className="border border-white/30 hover:border-white/70 hover:bg-white/5 text-white font-medium px-10 py-4 rounded-md transition-colors text-base flex items-center justify-center gap-2"
+              className="border border-white/30 hover:border-white/70 hover:bg-white/5 text-white font-medium px-7 py-3.5 sm:px-10 sm:py-4 rounded-md transition-colors text-sm sm:text-base flex items-center justify-center gap-2"
             >
               How It Works <ChevronRight size={16} />
             </Link>
@@ -104,7 +103,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Benefits ──────────────────────────────────── */}
-      <section className="py-20 pattern-light">
+      <section className="py-12 sm:py-16 md:py-20 pattern-light">
         <div className="container-site">
           <div className="text-center mb-12">
             <p className="text-[#b8892a] text-xs tracking-widest uppercase font-semibold mb-2">Why Hijama?</p>
@@ -128,7 +127,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Services preview ──────────────────────────── */}
-      <section className="py-20 bg-[#f2ede4]">
+      <section className="py-12 sm:py-16 md:py-20 bg-[#f2ede4]">
         <div className="container-site">
           <div className="text-center mb-12">
             <p className="text-[#b8892a] text-xs tracking-widest uppercase font-semibold mb-2">What We Offer</p>
@@ -160,31 +159,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Sunnah days ───────────────────────────────── */}
-      <section className="py-16 bg-[#1a4a4a] text-white">
-        <div className="container-site text-center">
-          <p className="text-[#c9a84c] text-xs tracking-widest uppercase font-semibold mb-3">Prophetic Recommendation</p>
-          <h2 className="text-2xl md:text-3xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif' }}>Sunnah Days for Hijama</h2>
-          <p className="text-white/70 max-w-xl mx-auto mb-8 text-sm leading-relaxed">
-            The Prophet ﷺ recommended performing hijama on the 17th, 19th, and 21st of the Islamic lunar month.
-            Mention your preferred Sunnah date when booking and we will do our best to accommodate you.
-          </p>
-          <div className="flex justify-center gap-5">
-            {SUNNAH_DAYS.map(day => (
-              <div key={day} className="w-16 h-16 rounded-full border-2 border-[#c9a84c] flex flex-col items-center justify-center">
-                <span className="text-2xl font-bold text-[#c9a84c]">{day}</span>
-                <span className="text-[9px] text-white/50 uppercase tracking-wider">lunar</span>
-              </div>
-            ))}
-          </div>
-          <Link href="/book" className="inline-block mt-8 bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-7 py-3 rounded-md transition-colors">
-            Book on a Sunnah Day
-          </Link>
-        </div>
-      </section>
-
       {/* ── How it works strip ────────────────────────── */}
-      <section className="py-20 pattern-light">
+      <section className="py-12 sm:py-16 md:py-20 pattern-light">
         <div className="container-site">
           <div className="text-center mb-12">
             <p className="text-[#b8892a] text-xs tracking-widest uppercase font-semibold mb-2">Simple Process</p>
@@ -199,9 +175,9 @@ export default async function HomePage() {
               { n: '04', title: 'Aftercare', body: 'Follow simple aftercare advice. Most patients feel benefits within 24 hours.' },
             ]
             return (
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 relative">
-                {/* Desktop connector line */}
-                <div className="hidden sm:block absolute top-7 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-[#e0d9cf] via-[#c9a84c]/40 to-[#e0d9cf]" aria-hidden="true" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+                {/* Connector line — only visible in 4-col layout */}
+                <div className="hidden lg:block absolute top-7 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-[#e0d9cf] via-[#c9a84c]/40 to-[#e0d9cf]" aria-hidden="true" />
                 {steps.map((step, i) => (
                   <div key={step.n} className="text-center relative">
                     <div className="w-14 h-14 rounded-full bg-[#1a4a4a] text-white flex items-center justify-center mx-auto mb-4 text-lg font-bold shadow-md relative z-10" style={{ fontFamily: 'Georgia, serif' }}>
@@ -223,14 +199,14 @@ export default async function HomePage() {
       </section>
 
       {/* ── Testimonials ──────────────────────────────── */}
-      <section className="py-20 bg-[#f2ede4]">
+      <section className="py-12 sm:py-16 md:py-20 bg-[#f2ede4]">
         <div className="container-site">
           <div className="text-center mb-12">
             <p className="text-[#b8892a] text-xs tracking-widest uppercase font-semibold mb-2">Patient Experiences</p>
             <h2 className="text-3xl font-bold text-[#1a4a4a]" style={{ fontFamily: 'Georgia, serif' }}>What Our Patients Say</h2>
             <div className="gold-divider" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {TESTIMONIALS.map(t => (
               <div key={t.name} className="bg-white rounded-xl p-6 border border-[#e0d9cf] shadow-sm relative overflow-hidden flex flex-col">
                 <span
@@ -262,7 +238,7 @@ export default async function HomePage() {
             Ready to Begin Your Healing Journey?
           </h2>
           <p className="text-white/70 max-w-xl mx-auto mb-4">
-            Book your appointment today and take the first step towards better health, in the way of the Sunnah.
+            Book your appointment today and take the first step towards better health and wellbeing.
           </p>
           <Link href="/book" className="inline-block bg-[#c9a84c] hover:bg-[#b8892a] text-white font-bold px-10 py-4 rounded-md transition-colors text-base">
             Book Your Appointment

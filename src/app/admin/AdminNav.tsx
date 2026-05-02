@@ -2,33 +2,44 @@
 
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
-import { Calendar, Settings, LogOut, List } from 'lucide-react'
+import { Calendar, Settings, LogOut, List, FileText } from 'lucide-react'
+
+const navLinks = [
+  { href: '/admin',               label: 'Appointments', icon: List },
+  { href: '/admin/services',      label: 'Services',     icon: Settings },
+  { href: '/admin/blocked-dates', label: 'Blocked Dates', icon: Calendar },
+  { href: '/admin/content',       label: 'Content',      icon: FileText },
+]
 
 export default function AdminNav() {
   return (
-    <header className="bg-[#1a4a4a] text-white px-6 py-3 flex items-center justify-between">
-      <div className="flex items-center gap-6">
+    <header className="bg-[#1a4a4a] text-white">
+      <div className="px-4 sm:px-6 py-3 flex items-center justify-between">
         <span className="font-bold text-[#c9a84c] text-sm" style={{ fontFamily: 'Georgia, serif' }}>
           Admin Panel
         </span>
-        <nav className="flex gap-4">
-          {[
-            { href: '/admin',              label: 'Appointments', icon: List },
-            { href: '/admin/services',     label: 'Services',     icon: Settings },
-            { href: '/admin/blocked-dates',label: 'Blocked Dates',icon: Calendar },
-          ].map(({ href, label, icon: Icon }) => (
+        <nav className="hidden sm:flex gap-4">
+          {navLinks.map(({ href, label, icon: Icon }) => (
             <Link key={href} href={href} className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white transition-colors">
               <Icon size={13} /> {label}
             </Link>
           ))}
         </nav>
+        <button
+          onClick={() => signOut({ callbackUrl: '/admin/login' })}
+          className="flex items-center gap-1.5 text-xs text-white/60 hover:text-white transition-colors"
+        >
+          <LogOut size={13} />
+          <span className="hidden sm:inline">Sign Out</span>
+        </button>
       </div>
-      <button
-        onClick={() => signOut({ callbackUrl: '/admin/login' })}
-        className="flex items-center gap-1.5 text-xs text-white/60 hover:text-white transition-colors"
-      >
-        <LogOut size={13} /> Sign Out
-      </button>
+      <div className="sm:hidden border-t border-white/10 px-4 py-2 flex justify-around">
+        {navLinks.map(({ href, label, icon: Icon }) => (
+          <Link key={href} href={href} className="flex items-center gap-1.5 text-xs text-white/70 hover:text-white transition-colors">
+            <Icon size={13} /> {label}
+          </Link>
+        ))}
+      </div>
     </header>
   )
 }

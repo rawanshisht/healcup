@@ -10,7 +10,7 @@ export default function Footer() {
     <footer>
       {/* ── Main footer body ─────────────────────────── */}
       <div className="pattern-bg text-white py-4">
-        <div className="container-site py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="container-site py-10 sm:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
 
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
@@ -105,7 +105,9 @@ export default function Footer() {
 
             <div className="flex gap-2.5 mt-6">
               <a
-                href="#"
+                href="https://www.instagram.com/al_radwan_hijama_therapy?igsh=MWRrZHV6MGZpZXVyYg=="
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Instagram"
                 className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-white/40 hover:border-[#c9a84c] hover:text-[#c9a84c] transition-colors"
               >

@@ -105,7 +105,7 @@ export default function FAQPage() {
   return (
     <>
       {/* ── Header ─────────────────────────────────────── */}
-      <section className="pattern-bg relative py-20 text-center text-white">
+      <section className="pattern-bg relative py-12 sm:py-16 md:py-20 text-center text-white">
         <div className="absolute inset-0 bg-[#1a4a4a]/80" />
         <div className="container-site relative z-10">
           <p className="text-[#c9a84c] text-xs tracking-widest uppercase font-semibold mb-2">Common Questions</p>

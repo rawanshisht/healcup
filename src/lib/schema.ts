@@ -46,8 +46,15 @@ export const blockedDates = pgTable('blocked_dates', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().default(sql`NOW()`),
 })
 
+export const siteContent = pgTable('site_content', {
+  key:       varchar('key', { length: 100 }).primaryKey(),
+  value:     jsonb('value').notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().default(sql`NOW()`),
+})
+
 export type Service     = typeof services.$inferSelect
 export type NewService  = typeof services.$inferInsert
 export type Appointment = typeof appointments.$inferSelect
 export type NewAppointment = typeof appointments.$inferInsert
 export type BlockedDate = typeof blockedDates.$inferSelect
+export type SiteContent = typeof siteContent.$inferSelect

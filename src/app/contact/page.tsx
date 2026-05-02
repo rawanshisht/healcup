@@ -11,7 +11,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <section className="pattern-bg relative py-20 text-center text-white">
+      <section className="pattern-bg relative py-12 sm:py-16 md:py-20 text-center text-white">
         <div className="absolute inset-0 bg-[#1a4a4a]/80" />
         <div className="container-site relative z-10">
           <p className="text-[#c9a84c] text-xs tracking-widest uppercase font-semibold mb-2">Get in Touch</p>
@@ -20,7 +20,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="py-16 pattern-light">
+      <section className="py-10 sm:py-14 md:py-16 pattern-light">
         <div className="container-site max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Info */}

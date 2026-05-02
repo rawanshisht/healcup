@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { db } from '@/lib/db'
 import { blockedDates } from '@/lib/schema'
 import { asc } from 'drizzle-orm'

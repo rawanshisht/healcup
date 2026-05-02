@@ -21,12 +21,13 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 const SCREENING_LABELS: Record<string, string> = {
-  blood_thinners: 'Blood thinners / anticoagulants',
-  skin_infection: 'Active skin infection or open wound',
-  fever: 'Fever or acute illness',
-  pregnant: 'Pregnancy',
-  anaemia: 'Severe anaemia / blood disorder',
-  recent_surgery: 'Surgery within the last 4 weeks',
+  blood_thinners:      'Blood thinners / anticoagulants',
+  high_blood_pressure: 'High blood pressure (hypertension)',
+  skin_infection:      'Active skin infection or open wound',
+  fever:               'Fever or acute illness',
+  pregnant:            'Pregnancy',
+  anaemia:             'Severe anaemia / blood disorder',
+  recent_surgery:      'Surgery within the last 4 weeks',
 }
 
 export default function AppointmentList({ initialAppointments }: { initialAppointments: Appointment[] }) {
@@ -122,21 +123,32 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
 
               {/* Screening answers */}
               {(() => {
-                const screening = a.screeningAnswers as Record<string, boolean> | null
-                const flags = screening ? Object.entries(screening).filter(([, v]) => v) : []
-                return flags.length > 0 ? (
-                  <div className="bg-[#fff9ed] border border-[#c9a84c]/30 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-[#b8892a] mb-2">⚠ Health Screening Flags</p>
-                    <ul className="space-y-1">
-                      {flags.map(([k]) => (
-                        <li key={k} className="text-xs text-gray-700 flex items-start gap-1.5">
-                          <span className="text-[#b8892a] shrink-0 mt-0.5">•</span>
-                          {SCREENING_LABELS[k] ?? k.replace(/_/g, ' ')}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null
+                const screening = a.screeningAnswers as Record<string, unknown> | null
+                if (!screening) return null
+                const flags = Object.entries(screening).filter(([, v]) => v === true)
+                const lastHijama = screening.lastHijama as string | null
+                return (
+                  <>
+                    {flags.length > 0 && (
+                      <div className="bg-[#fff9ed] border border-[#c9a84c]/30 rounded-lg p-3">
+                        <p className="text-xs font-semibold text-[#b8892a] mb-2">⚠ Health Screening Flags</p>
+                        <ul className="space-y-1">
+                          {flags.map(([k]) => (
+                            <li key={k} className="text-xs text-gray-700 flex items-start gap-1.5">
+                              <span className="text-[#b8892a] shrink-0 mt-0.5">•</span>
+                              {SCREENING_LABELS[k] ?? k.replace(/_/g, ' ')}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {lastHijama && (
+                      <p className="text-xs text-gray-500">
+                        <span className="font-semibold text-gray-600">Last hijama session:</span> {lastHijama}
+                      </p>
+                    )}
+                  </>
+                )
               })()}
 
               {/* Admin notes */}
