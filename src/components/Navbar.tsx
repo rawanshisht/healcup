@@ -14,10 +14,9 @@ const links = [
   { href: '/contact',      label: 'Contact' },
 ]
 
-export default function Navbar() {
+export default function Navbar({ phone }: { phone: string }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
-  const phone = process.env.NEXT_PUBLIC_CLINIC_PHONE ?? ''
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)

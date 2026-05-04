@@ -22,5 +22,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ key:
     .onConflictDoUpdate({ target: siteContent.key, set: { value, updatedAt: new Date() } })
   if (key === 'about') revalidatePath('/about')
   if (key === 'how_it_works') revalidatePath('/how-it-works')
+  if (key === 'contact_info') {
+    revalidatePath('/contact')
+    revalidatePath('/', 'layout')
+  }
   return NextResponse.json({ ok: true })
 }

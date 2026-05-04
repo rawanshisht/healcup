@@ -31,6 +31,8 @@ export const appointments = pgTable('appointments', {
   screeningAnswers:  jsonb('screening_answers').notNull().default(sql`'{}'`),
   consentGiven:      boolean('consent_given').notNull().default(false),
   status:            varchar('status', { length: 30 }).notNull().default('pending'),
+  stripeSessionId:   varchar('stripe_session_id', { length: 200 }),
+  depositPaid:       boolean('deposit_paid').notNull().default(false),
   adminNotes:        text('admin_notes'),
   createdAt:         timestamp('created_at', { withTimezone: true }).notNull().default(sql`NOW()`),
   updatedAt:         timestamp('updated_at', { withTimezone: true }).notNull().default(sql`NOW()`),

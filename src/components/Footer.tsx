@@ -1,10 +1,10 @@
 import Link from 'next/link'
-import { Phone, Mail, MapPin, Instagram } from 'lucide-react'
+import { Phone, Mail, MapPin, Instagram, Facebook } from 'lucide-react'
+import type { ContactInfo } from '@/app/admin/content/defaults'
 
-export default function Footer() {
+export default function Footer({ contact }: { contact: ContactInfo }) {
   const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama Clinic'
-  const phone = process.env.NEXT_PUBLIC_CLINIC_PHONE ?? ''
-  const email = process.env.NEXT_PUBLIC_CLINIC_EMAIL ?? ''
+  const { phone, email, address, facebook } = contact
 
   return (
     <footer>
@@ -92,15 +92,17 @@ export default function Footer() {
                   </a>
                 </li>
               )}
-              <li className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-white/8 flex items-center justify-center shrink-0 mt-0.5">
-                  <MapPin size={13} className="text-[#c9a84c]" />
-                </div>
-                <div>
-                  <p className="text-white/35 text-[10px] uppercase tracking-wider mb-0.5">Address</p>
-                  <p className="text-white/60 text-sm">123 Clinic Street<br />City, Postcode</p>
-                </div>
-              </li>
+              {address && (
+                <li className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-white/8 flex items-center justify-center shrink-0 mt-0.5">
+                    <MapPin size={13} className="text-[#c9a84c]" />
+                  </div>
+                  <div>
+                    <p className="text-white/35 text-[10px] uppercase tracking-wider mb-0.5">Address</p>
+                    <p className="text-white/60 text-sm whitespace-pre-line">{address}</p>
+                  </div>
+                </li>
+              )}
             </ul>
 
             <div className="flex gap-2.5 mt-6">
@@ -113,6 +115,17 @@ export default function Footer() {
               >
                 <Instagram size={15} />
               </a>
+              {facebook && (
+                <a
+                  href={facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                  className="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-white/40 hover:border-[#c9a84c] hover:text-[#c9a84c] transition-colors"
+                >
+                  <Facebook size={15} />
+                </a>
+              )}
             </div>
           </div>
 

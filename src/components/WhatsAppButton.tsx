@@ -1,8 +1,7 @@
-export default function WhatsAppButton() {
-  const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ''
-  if (!number) return null
+export default function WhatsAppButton({ whatsapp }: { whatsapp: string }) {
+  if (!whatsapp) return null
 
-  const url = `https://wa.me/${number}?text=${encodeURIComponent('Hello, I would like to enquire about booking a hijama appointment.')}`
+  const url = `https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent('Hello, I would like to enquire about booking a hijama appointment.')}`
 
   return (
     <a

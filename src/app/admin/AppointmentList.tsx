@@ -7,6 +7,7 @@ import type { Appointment } from '@/lib/schema'
 import { Phone, Mail, ChevronDown, ChevronUp } from 'lucide-react'
 
 const STATUS_STYLES: Record<string, string> = {
+  awaiting_payment: 'bg-blue-50 text-blue-700 border-blue-200',
   pending: 'bg-[#fdf6e3] text-[#b8892a] border-[#c9a84c]/40',
   confirmed: 'bg-[#e6f4f4] text-[#1e5c5c] border-[#2a8a8a]/40',
   cancelled: 'bg-red-50 text-red-700 border-red-200',
@@ -14,6 +15,7 @@ const STATUS_STYLES: Record<string, string> = {
 }
 
 const STATUS_LABELS: Record<string, string> = {
+  awaiting_payment: 'Awaiting Payment',
   pending: 'Pending',
   confirmed: 'Confirmed',
   cancelled: 'Cancelled',
@@ -81,6 +83,15 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${STATUS_STYLES[a.status] ?? 'bg-gray-100 text-gray-600'}`}>
                 {STATUS_LABELS[a.status] ?? a.status}
               </span>
+              {a.depositPaid ? (
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
+                  £20 Deposit Paid
+                </span>
+              ) : (
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full border bg-gray-50 text-gray-400 border-gray-200">
+                  No Deposit
+                </span>
+              )}
               <div>
                 <p className="font-semibold text-[#1a4a4a] text-sm">{a.patientName}</p>
                 <p className="text-xs text-gray-500">{a.serviceName} · {a.preferredDate} at {a.preferredTime}</p>
@@ -110,6 +121,13 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
                     </p>
                   )}
                   {a.howHeard && <p><span className="text-gray-400 text-xs">Source:</span> {a.howHeard}</p>}
+                  <p>
+                    <span className="text-gray-400 text-xs">Deposit:</span>{' '}
+                    {a.depositPaid
+                      ? <span className="text-emerald-600 font-semibold text-xs">£20 paid via Stripe ✓</span>
+                      : <span className="text-gray-400 text-xs">Not paid</span>
+                    }
+                  </p>
                 </div>
                 <div>
                   {a.reason && (
@@ -167,9 +185,15 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
               {/* Actions */}
               <div className="flex gap-2 flex-wrap">
                 {a.status !== 'confirmed' && (
-                  <button onClick={() => updateStatus(a.id, 'confirmed')} className="text-xs bg-[#237070] hover:bg-[#1e5c5c] text-white font-semibold px-4 py-2 rounded-lg transition-colors">
-                    ✓ Accept
-                  </button>
+                  a.depositPaid ? (
+                    <button onClick={() => updateStatus(a.id, 'confirmed')} className="text-xs bg-[#237070] hover:bg-[#1e5c5c] text-white font-semibold px-4 py-2 rounded-lg transition-colors">
+                      ✓ Accept
+                    </button>
+                  ) : (
+                    <span className="text-xs bg-gray-100 text-gray-400 font-semibold px-4 py-2 rounded-lg cursor-not-allowed" title="Cannot accept — deposit not paid">
+                      ✓ Accept (deposit required)
+                    </span>
+                  )
                 )}
                 <a
                   href={`https://wa.me/${a.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${a.patientName}, regarding your hijama appointment on ${a.preferredDate} at ${a.preferredTime} — we'd like to confirm or reschedule your booking. Please let us know your availability.`)}`}

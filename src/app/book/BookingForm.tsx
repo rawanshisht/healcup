@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { useSearchParams } from 'next/navigation'
-import { CheckCircle2, AlertTriangle, MessageCircle, Lock, ChevronLeft, ChevronRight } from 'lucide-react'
+import { CheckCircle2, AlertTriangle, MessageCircle, Lock, ChevronLeft, ChevronRight, CreditCard } from 'lucide-react'
 import type { Service } from '@/lib/schema'
 
 const SCREENING_QUESTIONS = [
@@ -135,7 +135,6 @@ export default function BookingForm({ services }: { services: Service[] }) {
 
   const [step, setStep] = useState(1)
   const [flagged, setFlagged] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [howHeard, setHowHeard] = useState('')
 
@@ -185,7 +184,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
         ...Object.fromEntries(SCREENING_QUESTIONS.map(q => [q.id, data[q.id as keyof FormData] as boolean])),
         lastHijama: data.lastHijama || null,
       }
-      const res = await fetch('/api/appointments', {
+      const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -204,116 +203,12 @@ export default function BookingForm({ services }: { services: Service[] }) {
         }),
       })
       if (!res.ok) throw new Error()
-      setSubmitted(true)
+      const { url } = await res.json()
+      window.location.href = url
     } catch {
       toast.error('Something went wrong. Please try again or call us directly.')
-    } finally {
       setLoading(false)
     }
-  }
-
-  // ── Confirmation screen ───────────────────────────────────────────────────
-  if (submitted) {
-    const waConfirmUrl = waNumber
-      ? `https://wa.me/${waNumber}?text=${encodeURIComponent(`As-salamu alaykum, I just booked an appointment for ${selectedService?.name ?? 'hijama'} on ${watch('preferredDate')} at ${watch('preferredTime')}. My name is ${watch('patientName')}. Looking forward to your confirmation.`)}`
-      : null
-
-    return (
-      <div className="rounded-2xl overflow-hidden" style={{ background: '#fff', boxShadow: '0 4px 24px rgba(26,74,74,0.10)', border: '1px solid #e6e2d8' }}>
-        <div className="h-1.5" style={{ background: 'linear-gradient(to right, #1a4a4a, #2a8a8a, #1a4a4a)' }} />
-        <div className="p-8 text-center">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#e6f4f4' }}>
-            <CheckCircle2 size={32} style={{ color: '#1a4a4a' }} />
-          </div>
-          <h2 className="text-2xl font-bold mb-1" style={{ fontFamily: 'var(--font-serif), Georgia, serif', color: '#1a4a4a' }}>
-            Appointment Provisionally Held
-          </h2>
-          <p className="text-sm text-gray-500 mb-6">Your spot is provisionally held — we will be in touch to confirm.</p>
-
-          {/* Receipt */}
-          <div className="rounded-xl overflow-hidden max-w-sm mx-auto mb-5" style={{ border: '1px solid #e6e2d8' }}>
-            <div className="px-4 py-3" style={{ background: '#1a4a4a' }}>
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#c9a84c' }}>Your Booking</p>
-            </div>
-            <div className="divide-y" style={{ background: '#fff', borderColor: '#f0ece4' }}>
-              {[
-                ['Service', selectedService?.name],
-                ['Date', watch('preferredDate')],
-                ['Time', watch('preferredTime')],
-              ].map(([label, val]) => (
-                <div key={label} className="flex justify-between px-4 py-2.5 text-sm">
-                  <span style={{ color: '#8a9e98' }}>{label}</span>
-                  <span className="font-semibold" style={{ color: '#1a2420' }}>{val}</span>
-                </div>
-              ))}
-              <div className="flex justify-between items-center px-4 py-2.5" style={{ borderBottom: '1px solid #f0ece4' }}>
-                <span className="text-sm" style={{ color: '#8a9e98' }}>Deposit</span>
-                <span className="font-bold text-sm" style={{ color: '#b8892a' }}>£{DEPOSIT_AMOUNT} — payment link to follow</span>
-              </div>
-              <div className="flex justify-between items-center px-4 py-3">
-                <span className="text-sm font-semibold" style={{ color: '#4a5e58' }}>Total</span>
-                <div className="text-right">
-                  <p style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 24, fontWeight: 700, color: '#1a4a4a', lineHeight: 1 }}>
-                    £{Number(selectedService?.price ?? 0).toFixed(0)}
-                  </p>
-                  <p className="text-xs mt-0.5" style={{ color: '#8a9e98' }}>£{Math.max(0, Number(selectedService?.price ?? 0) - DEPOSIT_AMOUNT)} remaining at clinic</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* What's next */}
-          <div className="rounded-xl p-4 max-w-sm mx-auto mb-5 text-sm text-left" style={{ background: '#1a4a4a' }}>
-            <p className="font-semibold mb-1.5 text-white">What happens next?</p>
-            <ul className="space-y-1.5 text-xs" style={{ color: 'rgba(255,255,255,0.75)' }}>
-              <li>✓ We will confirm your appointment within 24 hours via WhatsApp or phone</li>
-              <li>✓ A reminder will be sent 24 hours before your appointment</li>
-              {clinicPhone && <li>✓ Questions in the meantime? Call us on {clinicPhone}</li>}
-            </ul>
-          </div>
-
-          {waConfirmUrl && (
-            <a
-              href={waConfirmUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full max-w-sm mx-auto text-white font-semibold text-sm px-5 py-3 rounded-xl transition-colors mb-5"
-              style={{ background: '#25D366' }}
-            >
-              <MessageCircle size={16} />
-              Send us a WhatsApp to confirm faster
-            </a>
-          )}
-
-          {/* Pre-care */}
-          <div className="rounded-xl p-4 text-left max-w-sm mx-auto mb-5" style={{ background: '#fdf6e3', border: '1px solid rgba(201,168,76,0.3)' }}>
-            <p className="font-semibold text-sm mb-2" style={{ color: '#b8892a' }}>Before your appointment</p>
-            <ul className="space-y-1.5 text-xs" style={{ color: '#6b5a3a' }}>
-              <li>• Eat a light meal 2–3 hours before</li>
-              <li>• Shower and wear loose, dark-coloured clothing</li>
-              <li>• Stay well hydrated throughout the day</li>
-              <li>• Avoid strenuous exercise 24 hours before</li>
-            </ul>
-          </div>
-
-          {/* How did you find us */}
-          <div className="max-w-sm mx-auto text-left">
-            <p className="text-xs mb-1.5" style={{ color: '#8a9e98' }}>One last thing — how did you find us? <span style={{ color: '#c0b9b0' }}>(optional)</span></p>
-            <select
-              value={howHeard}
-              onChange={e => setHowHeard(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2 text-sm bg-white focus:outline-none"
-              style={{ borderColor: '#e6e2d8' }}
-            >
-              <option value="">— Select —</option>
-              {['Google search', 'Instagram', 'Facebook', 'Friend / family referral', 'WhatsApp', 'Mosque / Islamic centre', 'Other'].map(o => (
-                <option key={o} value={o}>{o}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-    )
   }
 
   // ── Step labels ───────────────────────────────────────────────────────────
@@ -877,14 +772,32 @@ export default function BookingForm({ services }: { services: Service[] }) {
               </div>
             )}
 
+            {/* How did you find us */}
+            <div>
+              <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1a2420' }}>
+                How did you find us? <span className="font-normal text-xs" style={{ color: '#a09890' }}>(optional)</span>
+              </label>
+              <select
+                value={howHeard}
+                onChange={e => setHowHeard(e.target.value)}
+                className="w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 bg-white"
+                style={{ border: '1.5px solid #d6d0c6' }}
+              >
+                <option value="">— Select —</option>
+                {['Google search', 'Instagram', 'Facebook', 'Friend / family referral', 'WhatsApp', 'Mosque / Islamic centre', 'Other'].map(o => (
+                  <option key={o} value={o}>{o}</option>
+                ))}
+              </select>
+            </div>
+
             {/* Deposit notice */}
             <div className="rounded-xl p-4 flex gap-3 items-start" style={{ background: '#fdf6e3', border: '1.5px solid rgba(201,168,76,0.5)' }}>
-              <span className="text-lg shrink-0 mt-0.5">💳</span>
+              <CreditCard size={18} className="shrink-0 mt-0.5" style={{ color: '#b8892a' }} />
               <div>
                 <p className="text-sm font-semibold mb-1" style={{ color: '#b8892a' }}>£{DEPOSIT_AMOUNT} deposit required to confirm</p>
                 <p className="text-xs leading-relaxed" style={{ color: '#6b5a3a' }}>
-                  After booking, we will send a secure payment link via WhatsApp or email to collect your £{DEPOSIT_AMOUNT} deposit.
-                  This secures your appointment slot. The deposit is non-refundable if cancelled within 1–2 hours of your appointment.
+                  Clicking the button below will take you to a secure Stripe payment page to pay your £{DEPOSIT_AMOUNT} deposit.
+                  This secures your slot. The deposit is non-refundable if cancelled within 1–2 hours of your appointment.
                 </p>
               </div>
             </div>
@@ -927,10 +840,11 @@ export default function BookingForm({ services }: { services: Service[] }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="font-bold py-3.5 px-6 rounded-xl transition-colors text-sm disabled:opacity-60"
+                className="font-bold py-3.5 px-6 rounded-xl transition-colors text-sm disabled:opacity-60 flex items-center justify-center gap-2"
                 style={{ flex: 2, background: '#c9a84c', color: '#fff' }}
               >
-                {loading ? 'Confirming...' : '✓ Confirm My Appointment'}
+                <CreditCard size={15} />
+                {loading ? 'Redirecting to payment…' : `Pay £${DEPOSIT_AMOUNT} Deposit`}
               </button>
             </div>
 

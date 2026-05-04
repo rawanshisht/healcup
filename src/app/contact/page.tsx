@@ -1,13 +1,22 @@
 import type { Metadata } from 'next'
-import { Phone, Mail, MapPin, Clock, MessageCircle } from 'lucide-react'
+import { Phone, Mail, MapPin, MessageCircle, Facebook } from 'lucide-react'
+import { db } from '@/lib/db'
+import { siteContent } from '@/lib/schema'
+import { eq } from 'drizzle-orm'
+import type { ContactInfo } from '@/app/admin/content/defaults'
+import { DEFAULT_CONTACT_INFO } from '@/app/admin/content/defaults'
 
 export const metadata: Metadata = { title: 'Contact Us' }
 
-export default function ContactPage() {
-  const phone = process.env.NEXT_PUBLIC_CLINIC_PHONE ?? '+44 700 000 0000'
-  const email = process.env.NEXT_PUBLIC_CLINIC_EMAIL ?? 'info@yourdomain.com'
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ''
-  const mapsUrl = process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL ?? '#'
+async function getContactInfo(): Promise<ContactInfo> {
+  const rows = await db.select().from(siteContent).where(eq(siteContent.key, 'contact_info'))
+  return rows.length ? (rows[0].value as ContactInfo) : DEFAULT_CONTACT_INFO
+}
+
+export default async function ContactPage() {
+  const contact = await getContactInfo()
+
+  const { address, phone, email, whatsapp, facebook } = contact
 
   return (
     <>
@@ -34,7 +43,7 @@ export default function ContactPage() {
               {[
                 { icon: Phone, label: 'Phone', value: phone, href: `tel:${phone}` },
                 { icon: Mail, label: 'Email', value: email, href: `mailto:${email}` },
-                { icon: MapPin, label: 'Address', value: '123 Clinic Street, City, Postcode', href: mapsUrl },
+                { icon: MapPin, label: 'Address', value: address, href: '#' },
               ].map(({ icon: Icon, label, value, href }) => (
                 <a key={label} href={href} target={label === 'Address' ? '_blank' : undefined} rel="noopener noreferrer"
                   className="flex items-start gap-3 p-4 bg-white rounded-xl border border-[#e0d9cf] hover:border-[#2a8a8a] transition-colors group">
@@ -48,9 +57,9 @@ export default function ContactPage() {
                 </a>
               ))}
 
-              {wa && (
+              {whatsapp && (
                 <a
-                  href={`https://wa.me/${wa}?text=${encodeURIComponent('Hello, I have an enquiry about hijama appointments.')}`}
+                  href={`https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent('Hello, I have an enquiry about hijama appointments.')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 w-full justify-center bg-[#25D366] hover:bg-[#1ebe5d] text-white font-semibold text-sm px-5 py-3 rounded-xl transition-colors"
@@ -59,17 +68,25 @@ export default function ContactPage() {
                   Message Us on WhatsApp
                 </a>
               )}
+
+              {facebook && (
+                <a
+                  href={facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 w-full justify-center bg-[#1877F2] hover:bg-[#166fe5] text-white font-semibold text-sm px-5 py-3 rounded-xl transition-colors"
+                >
+                  <Facebook size={16} />
+                  Visit Our Facebook Page
+                </a>
+              )}
             </div>
 
             {/* Map placeholder */}
             <div className="rounded-xl overflow-hidden border border-[#e0d9cf] shadow-sm bg-[#e6f4f4] flex flex-col items-center justify-center min-h-[300px] p-8 text-center">
               <MapPin size={40} className="text-[#2a8a8a] mb-3 opacity-50" />
-              <p className="text-[#1a4a4a] font-semibold mb-2">123 Clinic Street, City</p>
+              <p className="text-[#1a4a4a] font-semibold mb-2">{address}</p>
               <p className="text-sm text-gray-500 mb-4">Add your Google Maps embed here</p>
-              <a href={mapsUrl} target="_blank" rel="noopener noreferrer"
-                className="text-sm bg-[#1a4a4a] text-white px-4 py-2 rounded-md hover:bg-[#1e5c5c] transition-colors">
-                Open in Google Maps
-              </a>
             </div>
           </div>
         </div>

@@ -5,6 +5,11 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import { Toaster } from '@/components/ui/sonner'
+import { db } from '@/lib/db'
+import { siteContent } from '@/lib/schema'
+import { eq } from 'drizzle-orm'
+import { DEFAULT_CONTACT_INFO } from '@/app/admin/content/defaults'
+import type { ContactInfo } from '@/app/admin/content/defaults'
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -30,14 +35,25 @@ export const metadata: Metadata = {
   keywords: ['hijama', 'cupping therapy', 'wet cupping', 'dry cupping', 'sunnah', 'Islamic medicine'],
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+async function getContactInfo(): Promise<ContactInfo> {
+  try {
+    const rows = await db.select().from(siteContent).where(eq(siteContent.key, 'contact_info'))
+    return rows.length ? (rows[0].value as ContactInfo) : DEFAULT_CONTACT_INFO
+  } catch {
+    return DEFAULT_CONTACT_INFO
+  }
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const contact = await getContactInfo()
+
   return (
     <html lang="en" className={`${jakarta.variable} ${cormorant.variable}`}>
       <body>
-        <Navbar />
+        <Navbar phone={contact.phone} />
         <main>{children}</main>
-        <Footer />
-        <WhatsAppButton />
+        <Footer contact={contact} />
+        <WhatsAppButton whatsapp={contact.whatsapp} />
         <Toaster richColors position="top-right" />
       </body>
     </html>

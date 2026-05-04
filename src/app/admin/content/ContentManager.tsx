@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { Save, FileText, BookOpen } from 'lucide-react'
+import { Save, FileText, BookOpen, Phone } from 'lucide-react'
 
-import type { AboutContent, HowItWorksContent } from './defaults'
+import type { AboutContent, HowItWorksContent, ContactInfo } from './defaults'
 
-type Tab = 'about' | 'how_it_works'
+type Tab = 'about' | 'how_it_works' | 'contact'
 
 const input  = 'w-full border border-[#e0d9cf] rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#237070] transition'
 const label  = 'text-[11px] font-semibold uppercase tracking-wide text-gray-400 block mb-1.5'
@@ -56,9 +56,11 @@ function SaveBar({ onClick, saving }: { onClick: () => void; saving: boolean }) 
 export default function ContentManager({
   initialAbout,
   initialHowItWorks,
+  initialContactInfo,
 }: {
   initialAbout: AboutContent
   initialHowItWorks: HowItWorksContent
+  initialContactInfo: ContactInfo
 }) {
   const [tab, setTab] = useState<Tab>('about')
 
@@ -104,10 +106,29 @@ export default function ContentManager({
   const setList = (field: 'before' | 'after' | 'unsuitable', val: string) =>
     setHiw(h => ({ ...h, [field]: val.split('\n') }))
 
+  // ── Contact Info ──────────────────────────────────────────
+  const [contact, setContact]           = useState<ContactInfo>(initialContactInfo)
+  const [savingContact, setSavingContact] = useState(false)
+
+  const saveContact = async () => {
+    setSavingContact(true)
+    const res = await fetch('/api/site-content/contact_info', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(contact),
+    })
+    setSavingContact(false)
+    res.ok ? toast.success('Contact info saved') : toast.error('Failed to save')
+  }
+
+  const setContactField = (field: keyof ContactInfo, val: string) =>
+    setContact(c => ({ ...c, [field]: val }))
+
   // ── Tabs ──────────────────────────────────────────────────
   const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
     { key: 'about',        label: 'About Page',    icon: FileText },
     { key: 'how_it_works', label: 'How It Works',  icon: BookOpen },
+    { key: 'contact',      label: 'Contact Info',  icon: Phone },
   ]
 
   return (
@@ -269,6 +290,66 @@ export default function ContentManager({
           </Card>
 
           <SaveBar onClick={saveHiw} saving={savingHiw} />
+        </div>
+      )}
+
+      {/* ── Contact Info Tab ── */}
+      {tab === 'contact' && (
+        <div className="space-y-4 pt-4">
+          <Card>
+            <CardHeader title="Contact Details" subtitle="Shown on the Contact page and used for links throughout the site." />
+            <div className="p-6 space-y-4">
+              <Field lbl="Address">
+                <textarea
+                  className={`${input} resize-none`}
+                  rows={2}
+                  value={contact.address}
+                  onChange={e => setContactField('address', e.target.value)}
+                  placeholder="123 Clinic Street, City, Postcode"
+                />
+              </Field>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field lbl="Phone Number">
+                  <input
+                    className={input}
+                    type="tel"
+                    value={contact.phone}
+                    onChange={e => setContactField('phone', e.target.value)}
+                    placeholder="+44 700 000 0000"
+                  />
+                </Field>
+                <Field lbl="Email Address">
+                  <input
+                    className={input}
+                    type="email"
+                    value={contact.email}
+                    onChange={e => setContactField('email', e.target.value)}
+                    placeholder="info@yourdomain.com"
+                  />
+                </Field>
+                <Field lbl="WhatsApp Number (with country code, no spaces)">
+                  <input
+                    className={input}
+                    type="tel"
+                    value={contact.whatsapp}
+                    onChange={e => setContactField('whatsapp', e.target.value)}
+                    placeholder="+447514948957"
+                  />
+                </Field>
+                <Field lbl="Facebook Page URL">
+                  <input
+                    className={input}
+                    type="url"
+                    value={contact.facebook}
+                    onChange={e => setContactField('facebook', e.target.value)}
+                    placeholder="https://facebook.com/yourclinic"
+                  />
+                </Field>
+              </div>
+            </div>
+          </Card>
+
+          <SaveBar onClick={saveContact} saving={savingContact} />
         </div>
       )}
     </div>

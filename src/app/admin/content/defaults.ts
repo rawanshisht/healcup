@@ -1,3 +1,19 @@
+export type ContactInfo = {
+  address: string
+  phone: string
+  email: string
+  whatsapp: string
+  facebook: string
+}
+
+export const DEFAULT_CONTACT_INFO: ContactInfo = {
+  address: '123 Clinic Street, City, Postcode',
+  phone: '+44 700 000 0000',
+  email: 'info@yourdomain.com',
+  whatsapp: '',
+  facebook: '',
+}
+
 export type AboutContent = {
   storyHeading: string
   paragraph1: string
