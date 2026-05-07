@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
-import { Calendar, Settings, LogOut, List, FileText } from 'lucide-react'
+import { Calendar, Settings, LogOut, List, FileText, Package, ShoppingBag } from 'lucide-react'
 
 const navLinks = [
   { href: '/admin', label: 'Appointments', icon: List },
   { href: '/admin/services', label: 'Services', icon: Settings },
+  { href: '/admin/products', label: 'Products', icon: Package },
+  { href: '/admin/orders', label: 'Orders', icon: ShoppingBag },
   { href: '/admin/blocked-dates', label: 'Blocked Dates', icon: Calendar },
   { href: '/admin/content', label: 'Content', icon: FileText },
 ]

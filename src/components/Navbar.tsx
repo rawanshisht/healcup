@@ -3,12 +3,14 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Phone } from 'lucide-react'
+import { Menu, X, Phone, ShoppingCart } from 'lucide-react'
+import { useCart } from '@/context/cart'
 
 const links = [
   { href: '/',             label: 'Home' },
   { href: '/about',        label: 'About' },
   { href: '/services',     label: 'Services' },
+  { href: '/shop',         label: 'Shop' },
   { href: '/how-it-works', label: 'How It Works' },
   { href: '/faq',          label: 'FAQ' },
   { href: '/contact',      label: 'Contact' },
@@ -17,6 +19,7 @@ const links = [
 export default function Navbar({ phone }: { phone: string }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const { count } = useCart()
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
@@ -69,6 +72,14 @@ export default function Navbar({ phone }: { phone: string }) {
               {phone}
             </a>
           )}
+          <Link href="/cart" className="relative p-2 text-[#1a4a4a] hover:text-[#237070] transition-colors" aria-label="Cart">
+            <ShoppingCart size={20} />
+            {count > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#c9a84c] text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                {count > 9 ? '9+' : count}
+              </span>
+            )}
+          </Link>
           <Link
             href="/book"
             className="bg-[#c9a84c] hover:bg-[#b8892a] text-white text-sm font-bold px-5 py-2.5 rounded-md transition-colors shadow-sm"
@@ -77,14 +88,24 @@ export default function Navbar({ phone }: { phone: string }) {
           </Link>
         </div>
 
-        {/* Mobile toggle */}
-        <button
-          className="lg:hidden p-2 text-[#1a4a4a] rounded-md hover:bg-[#f0f9f9] active:bg-[#e6f4f4] transition-colors"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-        >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        {/* Mobile: cart + toggle */}
+        <div className="lg:hidden flex items-center gap-1">
+          <Link href="/cart" className="relative p-2 text-[#1a4a4a] hover:text-[#237070] transition-colors" aria-label="Cart">
+            <ShoppingCart size={20} />
+            {count > 0 && (
+              <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-[#c9a84c] text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                {count > 9 ? '9+' : count}
+              </span>
+            )}
+          </Link>
+          <button
+            className="p-2 text-[#1a4a4a] rounded-md hover:bg-[#f0f9f9] active:bg-[#e6f4f4] transition-colors"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile drawer */}

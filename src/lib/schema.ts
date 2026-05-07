@@ -54,9 +54,56 @@ export const siteContent = pgTable('site_content', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().default(sql`NOW()`),
 })
 
-export type Service     = typeof services.$inferSelect
-export type NewService  = typeof services.$inferInsert
-export type Appointment = typeof appointments.$inferSelect
+export const products = pgTable('products', {
+  id:          serial('id').primaryKey(),
+  name:        varchar('name', { length: 200 }).notNull(),
+  description: text('description'),
+  imageUrl:    text('image_url'),
+  price:       numeric('price', { precision: 10, scale: 2 }),
+  stock:       integer('stock').notNull().default(0),
+  active:      boolean('active').notNull().default(true),
+  sortOrder:   integer('sort_order').notNull().default(0),
+  createdAt:   timestamp('created_at', { withTimezone: true }).notNull().default(sql`NOW()`),
+})
+
+export const productVariants = pgTable('product_variants', {
+  id:        serial('id').primaryKey(),
+  productId: integer('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
+  label:     varchar('label', { length: 100 }).notNull(),
+  price:     numeric('price', { precision: 10, scale: 2 }).notNull(),
+  stock:     integer('stock').notNull().default(0),
+  sortOrder: integer('sort_order').notNull().default(0),
+})
+
+export const shopOrders = pgTable('shop_orders', {
+  id:              serial('id').primaryKey(),
+  customerName:    varchar('customer_name', { length: 200 }).notNull(),
+  email:           varchar('email', { length: 200 }).notNull(),
+  phone:           varchar('phone', { length: 50 }).notNull(),
+  total:           numeric('total', { precision: 10, scale: 2 }).notNull(),
+  status:          varchar('status', { length: 30 }).notNull().default('pending_payment'),
+  stripeSessionId: varchar('stripe_session_id', { length: 200 }),
+  notes:           text('notes'),
+  createdAt:       timestamp('created_at', { withTimezone: true }).notNull().default(sql`NOW()`),
+})
+
+export const shopOrderItems = pgTable('shop_order_items', {
+  id:           serial('id').primaryKey(),
+  orderId:      integer('order_id').notNull().references(() => shopOrders.id, { onDelete: 'cascade' }),
+  variantId:    integer('variant_id'),
+  productName:  varchar('product_name', { length: 200 }).notNull(),
+  variantLabel: varchar('variant_label', { length: 100 }).notNull(),
+  quantity:     integer('quantity').notNull(),
+  unitPrice:    numeric('unit_price', { precision: 10, scale: 2 }).notNull(),
+})
+
+export type Service        = typeof services.$inferSelect
+export type NewService     = typeof services.$inferInsert
+export type Appointment    = typeof appointments.$inferSelect
 export type NewAppointment = typeof appointments.$inferInsert
-export type BlockedDate = typeof blockedDates.$inferSelect
-export type SiteContent = typeof siteContent.$inferSelect
+export type BlockedDate    = typeof blockedDates.$inferSelect
+export type SiteContent    = typeof siteContent.$inferSelect
+export type Product        = typeof products.$inferSelect
+export type ProductVariant = typeof productVariants.$inferSelect
+export type ShopOrder      = typeof shopOrders.$inferSelect
+export type ShopOrderItem  = typeof shopOrderItems.$inferSelect
