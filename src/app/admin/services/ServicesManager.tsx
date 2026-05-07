@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import { toast } from 'sonner'
 import type { Service } from '@/lib/schema'
-import { Pencil, Trash2, Plus, Check, X, AlertTriangle } from 'lucide-react'
+import { Pencil, Trash2, Plus, Check, X, AlertTriangle, ChevronLeft, ChevronRight, Search } from 'lucide-react'
+
+const PAGE_SIZE = 6
 
 type ServiceForm = {
   name: string
@@ -132,6 +134,36 @@ export default function ServicesManager({ initialServices }: { initialServices: 
   const [adding, setAdding] = useState(false)
   const [form, setForm] = useState<ServiceForm>(emptyForm)
   const [confirmDelete, setConfirmDelete] = useState<{ id: number; name: string } | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const listRef = useRef<HTMLDivElement>(null)
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    return services.filter(s => {
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'live' && s.active) ||
+        (statusFilter === 'off' && !s.active)
+      const matchesSearch = !q || s.name.toLowerCase().includes(q) || (s.description ?? '').toLowerCase().includes(q)
+      return matchesStatus && matchesSearch
+    })
+  }, [services, search, statusFilter])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page)
+    listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const applyFilter = (newSearch: string, newStatus: string) => {
+    setSearch(newSearch)
+    setStatusFilter(newStatus)
+    setCurrentPage(1)
+  }
 
   const cancel = () => { setEditing(null); setAdding(false); setForm(emptyForm) }
 
@@ -200,64 +232,133 @@ export default function ServicesManager({ initialServices }: { initialServices: 
           onCancel={() => setConfirmDelete(null)}
         />
       )}
-      <div className="space-y-3">
-        {services.map(s => (
-          <div key={s.id} className="bg-white rounded-xl border border-[#e0d9cf] shadow-sm p-4">
-            {editing === s.id ? (
-              <>
-                <p className="text-sm font-semibold text-[#1a4a4a]">Editing: {s.name}</p>
-                <FormFields form={form} setForm={setForm} onSave={save} onCancel={cancel} />
-              </>
-            ) : (
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <span className="font-semibold text-[#1a4a4a] text-sm">{s.name}</span>
-                  {s.description && (
-                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">{s.description}</p>
-                  )}
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    £{Number(s.price).toFixed(0)} · {s.durationMinutes} min
-                    {s.restrictions ? ` · ${s.restrictions}` : ''}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  {/* Live on site toggle */}
-                  <button
-                    onClick={() => toggleActive(s)}
-                    title={s.active ? 'Visible on website — click to hide' : 'Hidden from website — click to show'}
-                    className="flex items-center gap-1.5 group"
-                  >
-                    <span className={`text-[10px] font-semibold transition-colors ${s.active ? 'text-[#237070]' : 'text-gray-400'}`}>
-                      {s.active ? 'Live' : 'Off'}
-                    </span>
-                    <div className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${s.active ? 'bg-[#2a8a8a]' : 'bg-gray-300'}`}>
-                      <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${s.active ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
-                    </div>
-                  </button>
-                  <button onClick={() => startEdit(s)} title="Edit" className="p-1.5 text-gray-400 hover:text-[#1a4a4a] transition-colors">
-                    <Pencil size={14} />
-                  </button>
-                  <button onClick={() => setConfirmDelete({ id: s.id, name: s.name })} title="Delete" className="p-1.5 text-gray-400 hover:text-red-500 transition-colors">
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-              </div>
-            )}
+      <div ref={listRef} className="space-y-3 pb-10">
+        {/* Add service + filter bar */}
+        <div className="flex flex-col sm:flex-row gap-2">
+          {!adding && (
+            <button
+              onClick={() => { setAdding(true); setEditing(null); setForm(emptyForm) }}
+              className="flex items-center gap-2 text-sm bg-[#1a4a4a] hover:bg-[#1e5c5c] text-white font-semibold px-4 py-2 rounded-lg transition-colors shrink-0"
+            >
+              <Plus size={15} /> Add Service
+            </button>
+          )}
+          <div className="relative flex-1">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <input
+              type="text"
+              value={search}
+              onChange={e => applyFilter(e.target.value, statusFilter)}
+              placeholder="Search services…"
+              className="w-full pl-8 pr-3 py-2 text-sm border border-[#e0d9cf] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#237070] bg-white"
+            />
           </div>
-        ))}
+          <select
+            value={statusFilter}
+            onChange={e => applyFilter(search, e.target.value)}
+            className="text-sm border border-[#e0d9cf] rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#237070] text-gray-700"
+          >
+            <option value="all">All</option>
+            <option value="live">Live</option>
+            <option value="off">Off</option>
+          </select>
+        </div>
 
-        {adding ? (
+        {/* Add form */}
+        {adding && (
           <div className="bg-white rounded-xl border border-[#237070] p-4">
             <p className="text-sm font-semibold text-[#1a4a4a]">New Service</p>
             <FormFields form={form} setForm={setForm} onSave={save} onCancel={cancel} />
           </div>
+        )}
+
+        {filtered.length === 0 ? (
+          <div className="bg-white rounded-xl border border-[#e0d9cf] p-10 text-center">
+            <p className="text-gray-400 text-sm">No services match your search.</p>
+          </div>
         ) : (
-          <button
-            onClick={() => { setAdding(true); setEditing(null); setForm(emptyForm) }}
-            className="flex items-center gap-2 text-sm text-[#237070] hover:text-[#1a4a4a] font-semibold transition-colors"
-          >
-            <Plus size={16} /> Add Service
-          </button>
+          <>
+            {paginated.map(s => (
+              <div key={s.id} className="bg-white rounded-xl border border-[#e0d9cf] shadow-sm p-4">
+                {editing === s.id ? (
+                  <>
+                    <p className="text-sm font-semibold text-[#1a4a4a]">Editing: {s.name}</p>
+                    <FormFields form={form} setForm={setForm} onSave={save} onCancel={cancel} />
+                  </>
+                ) : (
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <span className="font-semibold text-[#1a4a4a] text-sm">{s.name}</span>
+                      {s.description && (
+                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{s.description}</p>
+                      )}
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        £{Number(s.price).toFixed(0)} · {s.durationMinutes} min
+                        {s.restrictions ? ` · ${s.restrictions}` : ''}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <button
+                        onClick={() => toggleActive(s)}
+                        title={s.active ? 'Visible on website — click to hide' : 'Hidden from website — click to show'}
+                        className="flex items-center gap-1.5 group"
+                      >
+                        <span className={`text-[10px] font-semibold transition-colors ${s.active ? 'text-[#237070]' : 'text-gray-400'}`}>
+                          {s.active ? 'Live' : 'Off'}
+                        </span>
+                        <div className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${s.active ? 'bg-[#2a8a8a]' : 'bg-gray-300'}`}>
+                          <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${s.active ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
+                        </div>
+                      </button>
+                      <button onClick={() => startEdit(s)} title="Edit" className="p-1.5 text-gray-400 hover:text-[#1a4a4a] transition-colors">
+                        <Pencil size={14} />
+                      </button>
+                      <button onClick={() => setConfirmDelete({ id: s.id, name: s.name })} title="Delete" className="p-1.5 text-gray-400 hover:text-red-500 transition-colors">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between pt-2">
+                <p className="text-xs text-gray-400">
+                  Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filtered.length)} of {filtered.length}
+                </p>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => goToPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="p-1.5 rounded-lg border border-[#e0d9cf] text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft size={14} />
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => goToPage(page)}
+                      className={`min-w-[30px] h-[30px] text-xs font-semibold rounded-lg border transition-colors ${
+                        page === currentPage
+                          ? 'bg-[#1a4a4a] text-white border-[#1a4a4a]'
+                          : 'border-[#e0d9cf] text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => goToPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="p-1.5 rounded-lg border border-[#e0d9cf] text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </>

@@ -32,7 +32,7 @@ export default function BlockedDatesManager({ initialDates }: { initialDates: Bl
   }
 
   return (
-    <div className="space-y-4 max-w-lg">
+    <div className="space-y-4">
       <div className="bg-white rounded-xl border border-[#e0d9cf] p-4 space-y-3">
         <p className="text-sm font-semibold text-[#1a4a4a]">Add Blocked Date</p>
         <div className="flex gap-3">

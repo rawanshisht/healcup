@@ -21,7 +21,7 @@ export default async function AdminPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-3xl w-full mx-auto">
       <div>
         <h1 className="text-2xl font-bold text-[#1a4a4a]" style={{ fontFamily: 'Georgia, serif' }}>Appointments</h1>
         <p className="text-sm text-gray-500 mt-1">Manage all appointment requests</p>

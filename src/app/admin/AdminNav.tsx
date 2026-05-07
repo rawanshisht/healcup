@@ -5,15 +5,15 @@ import { signOut } from 'next-auth/react'
 import { Calendar, Settings, LogOut, List, FileText } from 'lucide-react'
 
 const navLinks = [
-  { href: '/admin',               label: 'Appointments', icon: List },
-  { href: '/admin/services',      label: 'Services',     icon: Settings },
+  { href: '/admin', label: 'Appointments', icon: List },
+  { href: '/admin/services', label: 'Services', icon: Settings },
   { href: '/admin/blocked-dates', label: 'Blocked Dates', icon: Calendar },
-  { href: '/admin/content',       label: 'Content',      icon: FileText },
+  { href: '/admin/content', label: 'Content', icon: FileText },
 ]
 
 export default function AdminNav() {
   return (
-    <header className="bg-[#1a4a4a] text-white">
+    <header className="bg-[#1a4a4a] text-white  mb-2">
       <div className="px-4 sm:px-6 py-3 flex items-center justify-between">
         <span className="font-bold text-[#c9a84c] text-sm" style={{ fontFamily: 'Georgia, serif' }}>
           Admin Panel
