@@ -115,11 +115,7 @@ async function handleShopOrder(session: Stripe.Checkout.Session) {
   const items = await db.select().from(shopOrderItems).where(eq(shopOrderItems.orderId, orderId))
 
   for (const item of items) {
-    await db
-      .update(productVariants)
-      .set({ stock: db.$count(productVariants) })
-      .where(eq(productVariants.id, item.variantId))
-
+    if (!item.variantId) continue
     const [variant] = await db.select().from(productVariants).where(eq(productVariants.id, item.variantId))
     if (variant) {
       await db.update(productVariants)

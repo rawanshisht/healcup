@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import { Toaster } from '@/components/ui/sonner'
+import { CartProvider } from '@/context/cart'
 import { db } from '@/lib/db'
 import { siteContent } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
@@ -50,11 +51,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${jakarta.variable} ${cormorant.variable}`}>
       <body>
-        <Navbar phone={contact.phone} />
-        <main>{children}</main>
-        <Footer contact={contact} />
-        <WhatsAppButton whatsapp={contact.whatsapp} />
-        <Toaster richColors position="top-right" />
+        <CartProvider>
+          <Navbar phone={contact.phone} />
+          <main>{children}</main>
+          <Footer contact={contact} />
+          <WhatsAppButton whatsapp={contact.whatsapp} />
+          <Toaster richColors position="top-right" />
+        </CartProvider>
       </body>
     </html>
   )

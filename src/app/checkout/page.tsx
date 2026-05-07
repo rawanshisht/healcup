@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useCart, cartKey } from '@/context/cart'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -13,10 +13,11 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({ name: '', email: '', phone: '' })
 
-  if (items.length === 0) {
-    router.replace('/cart')
-    return null
-  }
+  useEffect(() => {
+    if (items.length === 0) router.replace('/cart')
+  }, [items.length, router])
+
+  if (items.length === 0) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
