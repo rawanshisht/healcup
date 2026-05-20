@@ -46,12 +46,11 @@ export async function POST(req: NextRequest) {
         )
       )
 
-    const remaining = SLOT_CAPACITY - count
-    if (remaining < data.patients.length) {
-      const msg = remaining <= 0
-        ? 'This time slot is now fully booked. Please choose a different time.'
-        : `Only ${remaining} spot${remaining > 1 ? 's' : ''} remaining at this time. Please reduce the number of people or choose a different time.`
-      return NextResponse.json({ error: msg }, { status: 409 })
+    if (count > 0) {
+      return NextResponse.json(
+        { error: 'This time slot is now fully booked. Please choose a different time.' },
+        { status: 409 }
+      )
     }
 
     const baseUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'

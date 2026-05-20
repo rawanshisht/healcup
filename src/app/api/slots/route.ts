@@ -49,10 +49,11 @@ export async function GET(req: NextRequest) {
     .from(appointments)
     .where(and(eq(appointments.preferredDate, date), eq(appointments.preferredTime, prevTime), active))
 
+  // Any booking at T blocks the slot — slots are reserved per group (family/relatives)
   const overflowBlocked = countAtPrev >= SLOT_CAPACITY
-  const directlyFull = countAtT >= SLOT_CAPACITY
+  const directlyFull = countAtT > 0
   const blocked = overflowBlocked || directlyFull
-  const available = blocked ? 0 : SLOT_CAPACITY - countAtT
+  const available = blocked ? 0 : SLOT_CAPACITY
 
   return NextResponse.json({ booked: countAtT, available, blocked, capacity: SLOT_CAPACITY })
 }

@@ -67,8 +67,8 @@ const D_AMPM  = ['AM', 'PM']
 
 const emptyPatient = (): PatientData => ({
   name: '', phone: '', email: '', gender: '', reason: '',
-  blood_thinners: null, high_blood_pressure: null, skin_infection: null,
-  fever: null, pregnant: null, anaemia: null, recent_surgery: null,
+  blood_thinners: false, high_blood_pressure: false, skin_infection: false,
+  fever: false, pregnant: false, anaemia: false, recent_surgery: false,
   lastHijama: '',
 })
 
@@ -781,7 +781,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
                     <button
                       key={i}
                       type="button"
-                      onClick={() => setActiveTab(i)}
+                      onClick={() => { setActiveTab(i); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all shrink-0"
                       style={{
                         border: `1.5px solid ${isActive ? '#1a4a4a' : hasError ? '#fca5a5' : '#d6d0c6'}`,
@@ -810,14 +810,14 @@ export default function BookingForm({ services }: { services: Service[] }) {
             {groupSize > 1 && (
               <div className="flex gap-2">
                 {activeTab > 0 && (
-                  <button type="button" onClick={() => setActiveTab(prev => prev - 1)}
+                  <button type="button" onClick={() => { setActiveTab(prev => prev - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
                     className="flex-1 font-semibold py-2.5 rounded-xl text-sm transition-colors"
                     style={{ border: '1.5px solid #d6d0c6', background: '#fff', color: '#1a4a4a' }}>
                     ← Patient {activeTab}
                   </button>
                 )}
                 {activeTab < groupSize - 1 && (
-                  <button type="button" onClick={() => setActiveTab(prev => prev + 1)}
+                  <button type="button" onClick={() => { setActiveTab(prev => prev + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
                     className="flex-1 font-bold py-2.5 rounded-xl text-sm transition-colors"
                     style={{ background: 'rgba(26,74,74,0.12)', color: '#1a4a4a', border: '1.5px solid rgba(26,74,74,0.2)' }}>
                     Patient {activeTab + 2} →
