@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Stripe from 'stripe'
 import { db } from '@/lib/db'
 import { appointments } from '@/lib/schema'
-import { eq } from 'drizzle-orm'
+import { eq, or } from 'drizzle-orm'
 import { CheckCircle2, Phone, MessageCircle } from 'lucide-react'
 import type { Metadata } from 'next'
 
@@ -27,7 +27,19 @@ export default async function BookingSuccessPage({
     if (session.payment_status !== 'paid') redirect('/book')
 
     const appointmentId = parseInt(session.metadata?.appointmentId ?? '0')
+    const groupId = session.metadata?.groupId ?? null
+
     if (appointmentId) {
+      // Mark all appointments in the group as paid (idempotent — safe if webhook already ran)
+      const whereClause = groupId
+        ? or(eq(appointments.groupId, groupId), eq(appointments.id, appointmentId))
+        : eq(appointments.id, appointmentId)
+
+      await db
+        .update(appointments)
+        .set({ status: 'pending', depositPaid: true, updatedAt: new Date() })
+        .where(whereClause!)
+
       const rows = await db.select().from(appointments).where(eq(appointments.id, appointmentId))
       appointment = rows[0] ?? null
     }
