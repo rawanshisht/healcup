@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
         quantity: i.quantity,
       })),
       mode: 'payment',
-      success_url: `${baseUrl}/shop/success?order_id=${order.id}`,
+      success_url: `${baseUrl}/shop/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
       cancel_url: `${baseUrl}/cart`,
       metadata: { type: 'shop_order', orderId: String(order.id) },
     })

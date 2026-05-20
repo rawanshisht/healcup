@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import { Calendar, Settings, LogOut, List, FileText, Package, ShoppingBag } from 'lucide-react'
 
@@ -14,6 +15,9 @@ const navLinks = [
 ]
 
 export default function AdminNav() {
+  const pathname = usePathname()
+  if (pathname === '/admin/login') return null
+
   return (
     <header className="bg-[#1a4a4a] text-white  mb-2">
       <div className="px-4 sm:px-6 py-3 flex items-center justify-between">
