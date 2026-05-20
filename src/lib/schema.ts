@@ -33,6 +33,7 @@ export const appointments = pgTable('appointments', {
   status:            varchar('status', { length: 30 }).notNull().default('pending'),
   stripeSessionId:   varchar('stripe_session_id', { length: 200 }),
   depositPaid:       boolean('deposit_paid').notNull().default(false),
+  groupId:           varchar('group_id', { length: 50 }),
   adminNotes:        text('admin_notes'),
   createdAt:         timestamp('created_at', { withTimezone: true }).notNull().default(sql`NOW()`),
   updatedAt:         timestamp('updated_at', { withTimezone: true }).notNull().default(sql`NOW()`),

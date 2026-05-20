@@ -43,6 +43,14 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
   const [statusFilter, setStatusFilter] = useState('all')
   const listRef = useRef<HTMLDivElement>(null)
 
+  const groupCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const a of appts) {
+      if (a.groupId) counts[a.groupId] = (counts[a.groupId] ?? 0) + 1
+    }
+    return counts
+  }, [appts])
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     return appts.filter(a => {
@@ -157,6 +165,11 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
                       No Deposit
                     </span>
                   )}
+                  {a.groupId && (groupCounts[a.groupId] ?? 1) > 1 && (
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full border bg-indigo-50 text-indigo-700 border-indigo-200">
+                      Group of {groupCounts[a.groupId]}
+                    </span>
+                  )}
                   <div>
                     <p className="font-semibold text-[#1a4a4a] text-sm">{a.patientName}</p>
                     <p className="text-xs text-gray-500">{a.serviceName} · {a.preferredDate} at {a.preferredTime}</p>
@@ -186,6 +199,13 @@ export default function AppointmentList({ initialAppointments }: { initialAppoin
                         </p>
                       )}
                       {a.howHeard && <p><span className="text-gray-400 text-xs">Source:</span> {a.howHeard}</p>}
+                      {a.groupId && (groupCounts[a.groupId] ?? 1) > 1 && (
+                        <p>
+                          <span className="text-gray-400 text-xs">Group ID:</span>{' '}
+                          <span className="font-mono text-xs text-indigo-600">{a.groupId.slice(0, 8)}…</span>
+                          <span className="text-gray-400 text-xs ml-1">({groupCounts[a.groupId]} people booked together)</span>
+                        </p>
+                      )}
                       <p>
                         <span className="text-gray-400 text-xs">Deposit:</span>{' '}
                         {a.depositPaid
