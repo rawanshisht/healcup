@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { db } from '@/lib/db'
 import { appointments, shopOrders, shopOrderItems, productVariants } from '@/lib/schema'
-import { eq } from 'drizzle-orm'
+import { eq, or } from 'drizzle-orm'
 import { Resend } from 'resend'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
@@ -39,25 +39,37 @@ export async function POST(req: NextRequest) {
 
 async function handleAppointmentDeposit(session: Stripe.Checkout.Session) {
   const appointmentId = parseInt(session.metadata?.appointmentId ?? '0')
+  const groupId = session.metadata?.groupId ?? null
+
   if (!appointmentId) return
 
-  const [appointment] = await db
+  // Update all appointments in the group (or just the one if solo booking)
+  const whereClause = groupId
+    ? or(eq(appointments.groupId, groupId), eq(appointments.id, appointmentId))
+    : eq(appointments.id, appointmentId)
+
+  const updated = await db
     .update(appointments)
     .set({ status: 'pending', depositPaid: true, updatedAt: new Date() })
-    .where(eq(appointments.id, appointmentId))
+    .where(whereClause!)
     .returning()
+
+  const [appointment] = updated
 
   if (!appointment) return
 
-  if (appointment.email && process.env.RESEND_API_KEY) {
+  // Send confirmation to every patient in the group who has an email
+  const emailTargets = updated.filter(a => a.email)
+  if (emailTargets.length > 0 && process.env.RESEND_API_KEY) {
     try {
       const resend     = new Resend(process.env.RESEND_API_KEY)
       const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama Clinic'
       const fromAddr   = process.env.RESEND_FROM ?? `bookings@clinic.com`
 
+      for (const appt of emailTargets) {
       await resend.emails.send({
         from:    fromAddr,
-        to:      appointment.email,
+        to:      appt.email!,
         subject: `Booking Confirmed — ${clinicName}`,
         html: `
           <div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;color:#1c1c1c;">
@@ -66,14 +78,14 @@ async function handleAppointmentDeposit(session: Stripe.Checkout.Session) {
               <p style="color:rgba(255,255,255,0.7);margin:6px 0 0;font-size:13px;">Cupping Therapy</p>
             </div>
             <div style="padding:28px;">
-              <p style="font-size:16px;">As-salamu alaykum <strong>${appointment.patientName}</strong>,</p>
+              <p style="font-size:16px;">As-salamu alaykum <strong>${appt.patientName}</strong>,</p>
               <p>Your £20 deposit has been received and your appointment is confirmed!</p>
               <div style="background:#f0f9f9;border:1px solid #e0d9cf;border-radius:10px;padding:16px;margin:20px 0;">
                 <h3 style="margin:0 0 12px;color:#1a4a4a;font-size:14px;">Your Booking</h3>
                 <table style="font-size:13px;width:100%;">
-                  <tr><td style="color:#666;padding:3px 0;width:120px;">Service</td><td><strong>${appointment.serviceName}</strong></td></tr>
-                  <tr><td style="color:#666;padding:3px 0;">Date</td><td><strong>${appointment.preferredDate}</strong></td></tr>
-                  <tr><td style="color:#666;padding:3px 0;">Time</td><td><strong>${appointment.preferredTime}</strong></td></tr>
+                  <tr><td style="color:#666;padding:3px 0;width:120px;">Service</td><td><strong>${appt.serviceName}</strong></td></tr>
+                  <tr><td style="color:#666;padding:3px 0;">Date</td><td><strong>${appt.preferredDate}</strong></td></tr>
+                  <tr><td style="color:#666;padding:3px 0;">Time</td><td><strong>${appt.preferredTime}</strong></td></tr>
                   <tr><td style="color:#666;padding:3px 0;">Deposit paid</td><td><strong style="color:#1e5c5c;">£20 ✓</strong></td></tr>
                 </table>
               </div>
@@ -94,6 +106,7 @@ async function handleAppointmentDeposit(session: Stripe.Checkout.Session) {
           </div>
         `,
       })
+      }
     } catch (emailErr) {
       console.error('Confirmation email failed:', emailErr)
     }

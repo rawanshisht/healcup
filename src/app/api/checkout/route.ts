@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
       )
       .returning()
 
-    const totalPence = DEPOSIT_PENCE * data.patients.length
+    const totalPence = DEPOSIT_PENCE
     const primaryPatient = data.patients[0]
     const desc = data.patients.length > 1
       ? `${data.patients.map(p => p.name).join(', ')}`

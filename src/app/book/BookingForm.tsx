@@ -56,7 +56,7 @@ const CONSENT_POINTS = [
   'I understand that temporary bruising and skin marks are a normal part of treatment.',
   'I consent to treatment for all listed patients and understand the practitioner may pause or stop if needed for safety.',
   'I have read the pre-appointment and aftercare instructions.',
-  'The £20 deposit per person is non-refundable if cancelled within 1–2 hours of the scheduled appointment time.',
+  'The £20 deposit is non-refundable if cancelled within 1–2 hours of the scheduled appointment time.',
 ]
 
 const DEPOSIT_PER_PERSON = 20
@@ -540,7 +540,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
 
   const STEPS = ['Choose Service', 'Appointment', 'Patient Info', 'Confirm & Book']
 
-  const depositTotal = DEPOSIT_PER_PERSON * patients.length
+  const depositTotal = DEPOSIT_PER_PERSON
 
   // ── Render ───────────────────────────────────────────────────────────────
 
@@ -744,15 +744,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
               </div>
             </div>
 
-            {/* Deposit preview */}
-            {groupSize > 1 && (
-              <div className="px-4 py-3 rounded-xl flex items-center justify-between" style={{ background: '#fdf6e3', border: '1px solid rgba(201,168,76,0.4)' }}>
-                <span className="text-sm" style={{ color: '#6b5a3a' }}>Deposit ({groupSize} × £{DEPOSIT_PER_PERSON})</span>
-                <span className="font-bold text-sm" style={{ color: '#b8892a' }}>£{DEPOSIT_PER_PERSON * groupSize}</span>
-              </div>
-            )}
-
-            <div className="flex gap-3 pt-1">
+<div className="flex gap-3 pt-1">
               <button type="button" onClick={() => setStep(1)}
                 className="flex-1 font-semibold py-3 rounded-xl transition-colors text-sm"
                 style={{ border: '1.5px solid #d6d0c6', background: '#fff', color: '#1a4a4a' }}>
@@ -893,7 +885,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
 
                   <div className="flex justify-between items-center px-4 py-2.5" style={{ borderBottom: '1px solid #f0ece4' }}>
                     <span className="text-sm" style={{ color: '#8a9e98' }}>Deposit (due now)</span>
-                    <span className="font-bold text-sm" style={{ color: '#b8892a' }}>£{depositTotal} ({groupSize} × £{DEPOSIT_PER_PERSON})</span>
+                    <span className="font-bold text-sm" style={{ color: '#b8892a' }}>£{depositTotal}</span>
                   </div>
                   <div className="flex justify-between items-center px-4 py-2.5" style={{ borderBottom: '1px solid #f0ece4' }}>
                     <span className="text-sm" style={{ color: '#8a9e98' }}>Remaining balance</span>
@@ -933,7 +925,7 @@ export default function BookingForm({ services }: { services: Service[] }) {
               <div>
                 <p className="text-sm font-semibold mb-1" style={{ color: '#b8892a' }}>£{depositTotal} deposit required to confirm</p>
                 <p className="text-xs leading-relaxed" style={{ color: '#6b5a3a' }}>
-                  You will be taken to a secure Stripe payment page to pay the £{depositTotal} deposit ({groupSize} person{groupSize > 1 ? 's' : ''} × £{DEPOSIT_PER_PERSON}).
+                  You will be taken to a secure Stripe payment page to pay the £{depositTotal} deposit.
                   This secures your slot. The deposit is non-refundable if cancelled within 1–2 hours of your appointment.
                 </p>
               </div>
