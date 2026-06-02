@@ -38,7 +38,7 @@ export default function AdminLoginPage() {
             Admin Panel
           </p>
           <h1 className="text-xl font-bold text-white" style={{ fontFamily: 'Georgia, serif' }}>
-            {process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama'}
+            {process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'HealCup'}
           </h1>
           <p className="text-white/45 text-xs mt-1.5">Sign in to manage appointments and services</p>
         </div>

@@ -62,7 +62,7 @@ async function handleAppointmentDeposit(session: Stripe.Checkout.Session) {
   if (emailTargets.length > 0 && process.env.RESEND_API_KEY) {
     try {
       const resend     = new Resend(process.env.RESEND_API_KEY)
-      const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama Clinic'
+      const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'HealCup'
       const fromAddr   = process.env.RESEND_FROM ?? `bookings@clinic.com`
 
       for (const appt of emailTargets) {
@@ -139,7 +139,7 @@ async function handleShopOrder(session: Stripe.Checkout.Session) {
   if (process.env.RESEND_API_KEY) {
     try {
       const resend     = new Resend(process.env.RESEND_API_KEY)
-      const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama Clinic'
+      const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'HealCup'
       const fromAddr   = process.env.RESEND_FROM ?? `bookings@clinic.com`
 
       const itemRows = items.map(i =>

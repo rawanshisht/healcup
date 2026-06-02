@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     if (data.email && process.env.RESEND_API_KEY) {
       try {
         const resend = new Resend(process.env.RESEND_API_KEY)
-        const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama Clinic'
+        const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'HealCup'
         await resend.emails.send({
           from:    process.env.RESEND_FROM ?? `bookings@${process.env.NEXTAUTH_URL?.replace('https://', '').replace('http://', '') ?? 'clinic.com'}`,
           to:      data.email,

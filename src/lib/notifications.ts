@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 import type { Appointment } from './schema'
 
-const NAME = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama Clinic'
+const NAME = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'HealCup'
 
 function resendClient() {
   return process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null

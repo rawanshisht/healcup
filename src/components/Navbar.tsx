@@ -34,7 +34,7 @@ export default function Navbar({ phone }: { phone: string }) {
             className="text-[1.2rem] font-bold text-[#1a4a4a] tracking-tight group-hover:text-[#1e5c5c] transition-colors"
             style={{ fontFamily: 'Georgia, serif' }}
           >
-            {process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama'}
+            {process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'HealCup'}
           </span>
           <span className="text-[9px] tracking-[0.25em] text-[#b8892a] uppercase mt-0.5 font-medium">
             Cupping Therapy

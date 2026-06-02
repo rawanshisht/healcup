@@ -3,7 +3,7 @@ import { Phone, Mail, MapPin, Instagram, Facebook } from 'lucide-react'
 import type { ContactInfo } from '@/app/admin/content/defaults'
 
 export default function Footer({ contact }: { contact: ContactInfo }) {
-  const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama Clinic'
+  const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'HealCup'
   const { phone, email, address, facebook } = contact
 
   return (

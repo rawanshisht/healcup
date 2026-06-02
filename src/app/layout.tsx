@@ -27,7 +27,7 @@ const cormorant = Cormorant_Garamond({
   style: ['normal', 'italic'],
 })
 
-const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'Al-Shifa Hijama Clinic'
+const clinicName = process.env.NEXT_PUBLIC_CLINIC_NAME ?? 'HealCup'
 
 export const metadata: Metadata = {
   title: { default: clinicName, template: `%s | ${clinicName}` },
