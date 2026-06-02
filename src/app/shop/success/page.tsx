@@ -6,8 +6,6 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Order Confirmed' }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
 export default async function ShopSuccessPage({
   searchParams,
 }: {
@@ -17,6 +15,7 @@ export default async function ShopSuccessPage({
 
   if (!session_id) redirect('/shop')
 
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
   try {
     const session = await stripe.checkout.sessions.retrieve(session_id)
     if (session.payment_status !== 'paid') redirect('/shop')

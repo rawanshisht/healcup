@@ -5,11 +5,10 @@ import { appointments, shopOrders, shopOrderItems, productVariants } from '@/lib
 import { eq, or } from 'drizzle-orm'
 import { Resend } from 'resend'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
 export const runtime = 'nodejs'
 
 export async function POST(req: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
   const body = await req.text()
   const sig  = req.headers.get('stripe-signature')
 

@@ -5,8 +5,6 @@ import { shopOrders, shopOrderItems, productVariants, products } from '@/lib/sch
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
 const schema = z.object({
   customerName: z.string().min(2),
   email: z.string().email(),
@@ -22,6 +20,7 @@ const schema = z.object({
 })
 
 export async function POST(req: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
   try {
     const body = await req.json()
     const data = schema.parse(body)

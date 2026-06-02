@@ -5,8 +5,6 @@ import { appointments } from '@/lib/schema'
 import { and, eq, ne, sql } from 'drizzle-orm'
 import { z } from 'zod'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
 const DEPOSIT_PENCE = 2000 // £20 per person
 const SLOT_CAPACITY = 3
 
@@ -30,6 +28,7 @@ const schema = z.object({
 })
 
 export async function POST(req: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
   try {
     const body = await req.json()
     const data = schema.parse(body)

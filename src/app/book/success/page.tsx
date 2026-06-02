@@ -9,8 +9,6 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Booking Confirmed' }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
 export default async function BookingSuccessPage({
   searchParams,
 }: {
@@ -20,6 +18,7 @@ export default async function BookingSuccessPage({
 
   if (!session_id) redirect('/book')
 
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
   let appointment: typeof appointments.$inferSelect | null = null
 
   try {
